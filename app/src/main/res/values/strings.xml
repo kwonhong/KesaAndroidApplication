@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Kesa</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Drawer Strings -->
+    <string name="openDrawer">Open</string>
+    <string name="closeDrawer">Close</string>
+
+    <!-- Icon Strings -->
+    <string name="ic_profile">Profile</string>
+    <string name="ic_settings">Settings</string>
 </resources>
