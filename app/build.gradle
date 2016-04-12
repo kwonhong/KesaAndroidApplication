@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.kesa"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -27,9 +27,11 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
     compile 'com.google.guava:guava:18.0'
 
-
     // Dagger 2 - Dependency injection dependencies
     apt 'com.google.dagger:dagger-compiler:2.2'
     compile 'com.google.dagger:dagger:2.2'
     provided 'javax.annotation:jsr250-api:1.0'
+
+    // CircularImageView dependency
+    compile 'com.mikhaellopez:circularimageview:3.0.2'
 }
