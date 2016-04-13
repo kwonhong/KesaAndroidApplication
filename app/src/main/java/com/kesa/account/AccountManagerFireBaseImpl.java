@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-public class AccountManagerFireBaseImpl extends AccountManager{
+public class AccountManagerFireBaseImpl extends AccountManager {
 
     private final Firebase firebase;
     private final Resources resources;
