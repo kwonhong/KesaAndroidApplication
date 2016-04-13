@@ -1,6 +1,10 @@
 package com.kesa.modules;
 
 import android.app.Application;
+import android.content.res.Resources;
+
+import com.firebase.client.Firebase;
+import com.kesa.R;
 
 import javax.inject.Singleton;
 
@@ -24,5 +28,17 @@ public class AppModule {
     @Singleton
     Application providesApplication() {
         return application;
+    }
+
+    @Provides
+    @Singleton
+    Resources provideResources(Application application) {
+        return application.getResources();
+    }
+
+    @Provides
+    @Singleton
+    Firebase provideFirebase(Resources resources) {
+        return new Firebase(resources.getString(R.string.firebase_url));
     }
 }

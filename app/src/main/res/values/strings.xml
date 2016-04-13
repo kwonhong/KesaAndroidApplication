@@ -9,4 +9,12 @@
     <!-- Icon Strings -->
     <string name="ic_profile">Profile</string>
     <string name="ic_settings">Settings</string>
+
+    <!-- Dialog Strings-->
+    <string name="authenticate_dialog_message">Authenticating...</string>
+    <string name="change_password_dialog_message">Changing password...</string>
+    <string name="change_email_dialog_message">Changing email...</string>
+
+    <!-- Firebase Url String -->
+    <string name="firebase_url">https://torrid-inferno-4735.firebaseio.com/</string>
 </resources>

@@ -2,6 +2,7 @@ package com.kesa.app;
 
 import android.app.Application;
 
+import com.firebase.client.Firebase;
 import com.kesa.modules.AppModule;
 
 /**
@@ -16,6 +17,7 @@ public class KesaApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
+        Firebase.setAndroidContext(this);
         this.kesaComponent = DaggerKesaComponent.builder()
                 .appModule(new AppModule(this))
                 .build();
