@@ -34,4 +34,7 @@ dependencies {
 
     // CircularImageView dependency
     compile 'com.mikhaellopez:circularimageview:3.0.2'
+
+    // Firebase API dependency
+    compile 'com.firebase:firebase-client-android:2.5.2+'
 }
