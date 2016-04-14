@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                                            xmlns:app="http://schemas.android.com/apk/res-auto"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                                            android:layout_marginStart="@dimen/activity_horizontal_margin"
+                                            android:layout_marginTop="-20dp"
+                                            android:background="#ffffff"
+                                            android:padding="@dimen/activity_horizontal_margin"
+                                            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Contact Information Title -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:id="@+id/contactTxtView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="Primary Contact"
+                android:textColor="#000000"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+
+        <!-- Mobile Contact Information-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivContactItem1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_mobile_black"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"/>
+
+            <TextView
+                android:id="@+id/tvNumber1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/ivContactItem1"
+                android:layout_toRightOf="@id/ivContactItem1"
+                android:fontFamily="sans-serif-medium"
+                android:text="(123) 456-7890"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvNumber1"
+                android:layout_toEndOf="@id/ivContactItem1"
+                android:layout_toRightOf="@id/ivContactItem1"
+                android:text="Home"
+                android:fontFamily="sans-serif-thin"
+                android:textColor="#727272"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

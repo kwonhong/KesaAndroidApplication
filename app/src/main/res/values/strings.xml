@@ -17,4 +17,7 @@
 
     <!-- Firebase Url String -->
     <string name="firebase_url">https://torrid-inferno-4735.firebaseio.com/</string>
+    <string name="action_edit">Edit</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_edit_profile">EditProfileActivity</string>
 </resources>
