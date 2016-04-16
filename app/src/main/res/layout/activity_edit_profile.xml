@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.kesa.EditProfileActivity">
+    tools:context=".profile.EditProfileActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -20,16 +20,41 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:id="@+id/profileImageView"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_centerHorizontal="true"
+                app:civ_border_color="@color/md_white_1000"/>
+
+            <android.support.v7.widget.ButtonBarLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/profileImageView"
+                android:layout_centerHorizontal="true">
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/changePictureBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:clickable="true"
+                    android:drawablePadding="4dp"
+                    android:drawableStart="@drawable/ic_edit_white"
+                    android:fontFamily="sans-serif"
+                    android:text="Change Picture"
+                    android:textColor="@color/md_white_1000"
+                    android:textStyle="bold"/>
+
+            </android.support.v7.widget.ButtonBarLayout>
+        </RelativeLayout>
+
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_edit_profile"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email"/>
 
 </android.support.design.widget.CoordinatorLayout>

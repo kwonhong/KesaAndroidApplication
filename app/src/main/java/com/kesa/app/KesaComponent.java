@@ -3,6 +3,8 @@ package com.kesa.app;
 import com.kesa.MainActivity;
 import com.kesa.modules.AppModule;
 import com.kesa.modules.NetModule;
+import com.kesa.profile.EditProfileActivity;
+import com.kesa.profile.ProfileActivity;
 
 import javax.inject.Singleton;
 
@@ -18,4 +20,6 @@ import dagger.Component;
 @Component(modules = {AppModule.class, NetModule.class})
 public interface KesaComponent {
     void inject(MainActivity mainActivity);
+    void inject(EditProfileActivity editProfileActivity);
+    void inject(ProfileActivity profileActivity);
 }

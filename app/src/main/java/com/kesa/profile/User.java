@@ -1,16 +1,16 @@
 package com.kesa.profile;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * TODO(hongil): Add Javadoc
- */
+@AllArgsConstructor(suppressConstructorProperties = true)
 public class User {
 
+    @Setter
     @Getter
-    private final String uid;
+    private String uid;
 
     @Getter
     @Setter
@@ -18,11 +18,17 @@ public class User {
 
     @Getter
     @Setter
-    private String field;
+    private String program;
 
-    public User(String uid, String name, String field) {
-        this.uid = uid;
-        this.name = name;
-        this.field = field;
+    @Getter
+    @Setter
+    private String mobile;
+
+    @Getter
+    @Setter
+    private String profileImage;
+
+    public User() {
+        // Empty default constructor, necessary for Firebase to be able to deserialize.
     }
 }

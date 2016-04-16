@@ -9,14 +9,36 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.kesa.app.KesaApplication;
+import com.kesa.profile.ProfileActivity;
+import com.kesa.profile.ProfileManager;
+import com.kesa.profile.User;
+import com.kesa.util.ImageEncoder;
+
+import javax.inject.Inject;
+
+import rx.Observer;
 
 public class MainActivity extends AppCompatActivity {
 
+    @Inject
+    ProfileManager profileManager;
+
+    @Inject
+    ImageEncoder imageEncoder;
+
     private DrawerLayout drawerLayout;
+    private ImageView profileImageView;
+    private TextView nameTextView;
+    private TextView programTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((KesaApplication) getApplication()).getComponent().inject(this); // Dependency Injection
         setContentView(R.layout.activity_main);
 
         // Initializing Toolbar and setting it as the actionbar
@@ -31,14 +53,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                // Code here will be triggered once the drawer closes as we dont want anything to
+                // Code here will be triggered once the drawer closes as we don't want anything to
                 // happen so we leave this blank
                 super.onDrawerClosed(drawerView);
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                // Code here will be triggered once the drawer open as we dont want anything to
+                // Code here will be triggered once the drawer open as we don't want anything to
                 // happen so we leave this blank
                 super.onDrawerOpened(drawerView);
             }
@@ -70,6 +92,35 @@ public class MainActivity extends AppCompatActivity {
         //calling sync state is necessary or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
 
+        View navigationViewHeader = navigationView.getHeaderView(0);
+        profileImageView = (ImageView) navigationViewHeader.findViewById(R.id.profileImageView);
+        nameTextView = (TextView) navigationViewHeader.findViewById(R.id.nameTextView);
+        programTextView = (TextView) navigationViewHeader.findViewById(R.id.programTextView);
 
+        // Retrieving the profile information of the user.
+        profileManager
+                .registerActivity(this)
+                .get("1", new Observer<User>() {
+                    @Override
+                    public void onCompleted() {
+                        // Complete method is not necessary in this case.
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        // TODO(hongil): Handle error cases.
+                        // ex) Network Error, Failing to receive information from Firebase API error
+                    }
+
+                    @Override
+                    public void onNext(User user) {
+                        // Updating the profile information after receiving the profile information.
+                        profileImageView.setImageBitmap(
+                                imageEncoder.decodeBase64(
+                                        user.getProfileImage()));
+                        nameTextView.setText(user.getName());
+                        programTextView.setText(user.getProgram());
+                    }
+                });
     }
 }
