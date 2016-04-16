@@ -24,6 +24,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:cardview-v7:23.3.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.google.guava:guava:18.0'
 
@@ -41,4 +42,7 @@ dependencies {
     // Lombok library dependency
     provided "org.projectlombok:lombok:1.12.6"
     apt "org.projectlombok:lombok:1.12.6"
+
+    // RxAndroid library dependency
+    compile 'io.reactivex:rxandroid:0.25.0'
 }

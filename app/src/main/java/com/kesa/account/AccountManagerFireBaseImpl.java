@@ -30,8 +30,13 @@ public class AccountManagerFireBaseImpl extends AccountManager {
         checkNotNull(password);
         checkState(activity != null, "Activity must be registered before authentication.");
 
-        final ProgressDialog progressDialog = ProgressDialog.show(activity, null,
-                resources.getString(R.string.authenticate_dialog_message), false, false);
+        final ProgressDialog progressDialog =
+                ProgressDialog.show(
+                        activity,
+                        null,
+                        resources.getString(R.string.authenticate_dialog_message),
+                        false,
+                        false);
         progressDialog.show();
         firebase.authWithPassword(email, password, new Firebase.AuthResultHandler() {
             @Override
@@ -53,8 +58,13 @@ public class AccountManagerFireBaseImpl extends AccountManager {
         checkNotNull(newPassword);
         checkState(activity != null, "Activity must be registered before authentication.");
 
-        final ProgressDialog progressDialog = ProgressDialog.show(activity, null,
-                resources.getString(R.string.change_password_dialog_message), false, false);
+        final ProgressDialog progressDialog =
+                ProgressDialog.show(
+                        activity,
+                        null,
+                        resources.getString(R.string.change_password_dialog_message),
+                        false,
+                        false);
         progressDialog.show();
         firebase.changePassword(email, oldPassword, newPassword, new Firebase.ResultHandler() {
             @Override
@@ -76,8 +86,13 @@ public class AccountManagerFireBaseImpl extends AccountManager {
         checkNotNull(password);
         checkState(activity != null, "Activity must be registered before authentication.");
 
-        final ProgressDialog progressDialog = ProgressDialog.show(activity, null,
-                resources.getString(R.string.change_email_dialog_message), false, false);
+        final ProgressDialog progressDialog =
+                ProgressDialog.show(
+                        activity,
+                        null,
+                        resources.getString(R.string.change_email_dialog_message),
+                        false,
+                        false);
         progressDialog.show();
         firebase.changeEmail(oldEmail, password, newEmail, new Firebase.ResultHandler() {
             @Override

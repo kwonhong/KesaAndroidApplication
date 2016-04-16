@@ -11,7 +11,7 @@ import android.app.ProgressDialog;
  */
 public abstract class AccountManager {
 
-    // TODO(hongil): Add javadoc
+    /** Mainly used to make the transactions synchronous by prompting a {@link ProgressDialog}. */
     protected Activity activity;
 
     public AccountManager registerActivity(final Activity activity) {

@@ -9,15 +9,29 @@
     <!-- Icon Strings -->
     <string name="ic_profile">Profile</string>
     <string name="ic_settings">Settings</string>
+    <string name="ic_done">Done</string>
 
     <!-- Dialog Strings-->
-    <string name="authenticate_dialog_message">Authenticating...</string>
-    <string name="change_password_dialog_message">Changing password...</string>
-    <string name="change_email_dialog_message">Changing email...</string>
+    <string name="authenticate_dialog_message">Authenticating…</string>
+    <string name="change_password_dialog_message">Changing password…</string>
+    <string name="change_email_dialog_message">Changing email…</string>
+    <string name="saving_or_updating_user_dialog_message">Saving/Updating user…</string>
+    <string name="retrieving_user_dialog_message">Retrieving user information…</string>
 
     <!-- Firebase Url String -->
     <string name="firebase_url">https://torrid-inferno-4735.firebaseio.com/</string>
     <string name="action_edit">Edit</string>
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_edit_profile">EditProfileActivity</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+
+    <!-- EditTextView Hint Strings-->
+    <string name="name_text_view_hint">Name</string>
+    <string name="program_text_view_hint">Program</string>
+    <string name="phone_number_text_view_hint">Phone Number</string>
+
 </resources>
