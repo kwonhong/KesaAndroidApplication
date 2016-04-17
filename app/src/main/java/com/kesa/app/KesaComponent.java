@@ -1,6 +1,7 @@
 package com.kesa.app;
 
 import com.kesa.MainActivity;
+import com.kesa.MembersFragment;
 import com.kesa.modules.AppModule;
 import com.kesa.modules.NetModule;
 import com.kesa.profile.EditProfileActivity;
@@ -22,4 +23,5 @@ public interface KesaComponent {
     void inject(MainActivity mainActivity);
     void inject(EditProfileActivity editProfileActivity);
     void inject(ProfileActivity profileActivity);
+    void inject(MembersFragment membersFragment);
 }

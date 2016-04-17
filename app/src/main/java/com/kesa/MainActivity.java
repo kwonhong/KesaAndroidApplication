@@ -24,11 +24,8 @@ import rx.Observer;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Inject
-    ProfileManager profileManager;
-
-    @Inject
-    ImageEncoder imageEncoder;
+    @Inject ProfileManager profileManager;
+    @Inject ImageEncoder imageEncoder;
 
     private DrawerLayout drawerLayout;
     private ImageView profileImageView;
@@ -79,6 +76,13 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(profileIntent);
                         finish();
                         return true;
+
+                    case R.id.members:
+                        // Insert the fragment by replacing any existing fragment
+                        getFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frame, new MembersFragment())
+                                .commit();
 
                     default:
                         return false;
