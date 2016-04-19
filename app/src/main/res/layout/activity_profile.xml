@@ -23,37 +23,35 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:gravity="center_horizontal">
+            android:layout_marginBottom="25dp">
 
             <com.mikhaellopez.circularimageview.CircularImageView
                 android:id="@+id/profileImageView"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_marginBottom="10dp"
+                android:layout_centerHorizontal="true"
                 app:civ_border_color="#EEEEEE"/>
 
             <TextView
                 android:id="@+id/nameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/profileImageView"
-                android:layout_alignStart="@+id/profileImageView"
                 android:layout_below="@+id/profileImageView"
                 android:fontFamily="sans-serif"
-                android:gravity="center_horizontal"
+                android:layout_centerHorizontal="true"
                 android:textColor="@color/md_white_1000"
+                android:maxLines="1"
                 android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/programTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/profileImageView"
-                android:layout_alignStart="@+id/profileImageView"
                 android:layout_below="@+id/nameTextView"
                 android:fontFamily="sans-serif"
-                android:gravity="center_horizontal"
+                android:maxLines="1"
+                android:layout_centerHorizontal="true"
                 android:textColor="@color/md_white_1000"/>
         </RelativeLayout>
 

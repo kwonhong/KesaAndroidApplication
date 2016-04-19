@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:drawablePadding="10dp"
-                    android:drawableStart="@drawable/ic_settings"
+                    android:drawableStart="@drawable/ic_program"
                     android:fontFamily="sans-serif"
                     android:hint="@string/program_text_view_hint"
                     android:inputType="text"

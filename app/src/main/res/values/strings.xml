@@ -19,13 +19,11 @@
     <string name="change_email_dialog_message">Changing email…</string>
     <string name="saving_or_updating_user_dialog_message">Saving/Updating user…</string>
     <string name="retrieving_user_dialog_message">Retrieving user information…</string>
+    <string name="create_account_dialog_message">Creating account...</string>
 
     <!-- Firebase Url String -->
     <string name="firebase_url">https://torrid-inferno-4735.firebaseio.com/</string>
     <string name="action_edit">Edit</string>
-    <string name="title_activity_profile">ProfileActivity</string>
-    <string name="title_activity_edit_profile">EditProfileActivity</string>
-    <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -35,5 +33,17 @@
     <string name="name_text_view_hint">Name</string>
     <string name="program_text_view_hint">Program</string>
     <string name="phone_number_text_view_hint">Phone Number</string>
+    <string name="email_edit_text_hint">Email</string>
+    <string name="password_edit_text_hint">Password</string>
+    <string name="name_edit_text_hint">Name</string>
+    <string name="login_button_text">Login</string>
+    <string name="create_account_text">No account yet? Create one</string>
+    <string name="create_account_button_text">Create Account</string>
+
+    <!-- Activity title strings-->
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_edit_profile">EditProfileActivity</string>
 
 </resources>

@@ -28,6 +28,7 @@
                 android:id="@+id/profileImageView"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
+                android:src="@drawable/empty_engineer_profile"
                 android:layout_centerHorizontal="true"
                 app:civ_border_color="@color/md_white_1000"/>
 

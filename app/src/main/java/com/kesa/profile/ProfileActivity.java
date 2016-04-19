@@ -12,11 +12,14 @@ import android.widget.TextView;
 
 import com.kesa.MainActivity;
 import com.kesa.R;
+import com.kesa.account.AccountManager;
 import com.kesa.app.KesaApplication;
 import com.kesa.util.ImageEncoder;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import rx.Observer;
 
 /**
@@ -26,52 +29,38 @@ import rx.Observer;
  */
 public class ProfileActivity extends AppCompatActivity {
 
+    public static final String UID_EXTRA ="UidExtra";
+
     @Inject ProfileManager profileManager;
+    @Inject AccountManager accountManager;
     @Inject ImageEncoder imageEncoder;
 
-    private TextView nameTextView;
-    private TextView programTextView;
-    private ImageView profileImageView;
+    @Bind(R.id.nameTextView) TextView nameTextView;
+    @Bind(R.id.programTextView) TextView programTextView;
+    @Bind(R.id.mobileTextView) TextView mobileTextView;
+    @Bind(R.id.profileImageView) ImageView profileImageView;
+
+    private boolean isDisplayingCurrentUserProfile; // Default to false
+    private String currentUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((KesaApplication) getApplication()).getComponent().inject(this); // Dependency Injection
         setContentView(R.layout.activity_profile);
         setUpToolbar();
 
-        // Finding view components from the layout.
-        nameTextView = (TextView) findViewById(R.id.nameTextView);
-        programTextView = (TextView) findViewById(R.id.programTextView);
-        profileImageView = (ImageView) findViewById(R.id.profileImageView);
+        // Dependency Injections
+        ButterKnife.bind(this);
+        ((KesaApplication) getApplication()).getComponent().inject(this);
+
+        // Getting the uid of the displaying profile
+        this.currentUid = getIntent().getStringExtra(UID_EXTRA);
+        if (this.currentUid == null) {
+            isDisplayingCurrentUserProfile = true;
+            this.currentUid = accountManager.getCurrentUserUid();
+        }
+
         updateProfile();
-    }
-
-    /** Updating the profile after retrieving the profile information of the user. */
-    private void updateProfile() {
-        profileManager
-                .registerActivity(this)
-                .get("1", new Observer<User>() {
-                    @Override
-                    public void onCompleted() {
-                        // Complete method is not necessary in this case.
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        // TODO(hongil): Handle error cases.
-                        // ex) Network Error, Failing to receive information from Firebase API error
-                    }
-
-                    @Override
-                    public void onNext(User user) {
-                        // Updating the profile information after receiving the profile information.
-                        nameTextView.setText(user.getName());
-                        programTextView.setText(user.getProgram());
-                        profileImageView.setImageBitmap(imageEncoder.decodeBase64(user
-                                .getProfileImage()));
-                    }
-                });
     }
 
     @Override
@@ -80,17 +69,13 @@ public class ProfileActivity extends AppCompatActivity {
         updateProfile();
     }
 
-    private void setUpToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_profile, menu);
+        if (isDisplayingCurrentUserProfile) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_profile, menu);
+        }
+
         return true;
     }
 
@@ -112,5 +97,40 @@ public class ProfileActivity extends AppCompatActivity {
             default:
                 return false;
         }
+    }
+
+    private void setUpToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    /** Updating the profile after retrieving the profile information of the user. */
+    private void updateProfile() {
+        profileManager
+            .registerActivity(this)
+            .get(currentUid, new Observer<User>() {
+                @Override
+                public void onCompleted() {
+                    // Complete method is not necessary in this case.
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    // TODO(hongil): Handle error cases.
+                    // ex) Network Error, Failing to receive information from Firebase API error
+                }
+
+                @Override
+                public void onNext(User user) {
+                    // Updating the profile information after receiving the profile information.
+                    nameTextView.setText(user.getName());
+                    programTextView.setText(user.getProgram());
+                    mobileTextView.setText(user.getMobile());
+                    profileImageView.setImageBitmap(
+                        imageEncoder.decodeBase64(user.getProfileImage()));
+                }
+            });
     }
 }

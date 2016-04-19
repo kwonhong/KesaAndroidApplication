@@ -46,6 +46,9 @@ dependencies {
     // RxAndroid library dependency
     compile 'io.reactivex:rxandroid:0.25.0'
 
-    //  Google Now/Maps/Play persistent search bar library dependency
+    // Google Now/Maps/Play persistent search bar library dependency
     compile 'com.miguelcatalan:materialsearchview:1.4.0'
+
+    // Butter Knife Library dependency
+    compile 'com.jakewharton:butterknife:7.0.1'
 }

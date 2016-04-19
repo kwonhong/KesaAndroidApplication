@@ -1,7 +1,9 @@
 package com.kesa.modules;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.preference.PreferenceManager;
 
 import com.firebase.client.Firebase;
 import com.kesa.R;
@@ -34,6 +36,12 @@ public class AppModule {
     @Singleton
     Resources provideResources(Application application) {
         return application.getResources();
+    }
+
+    @Provides
+    @Singleton
+    SharedPreferences provideSharedPreferences(Application application) {
+        return PreferenceManager.getDefaultSharedPreferences(application);
     }
 
     @Provides

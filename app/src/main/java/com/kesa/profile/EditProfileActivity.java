@@ -12,20 +12,25 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.kesa.R;
+import com.kesa.account.AccountManager;
 import com.kesa.app.KesaApplication;
 import com.kesa.util.ImageEncoder;
+import com.kesa.util.OnCompleteListener;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Observer;
 
 /**
@@ -39,44 +44,29 @@ public class EditProfileActivity extends AppCompatActivity {
     private static final int PICTURE_SELECTION_REQUEST_CODE = 1000;
 
     @Inject ProfileManager profileManager;
+    @Inject AccountManager accountManager;
     @Inject ImageEncoder imageEncoder;
 
-    private ImageView profileImageView;
-    private EditText nameEditText;
-    private EditText programEditText;
-    private EditText mobileEditText;
+    @Bind(R.id.profileImageView) ImageView profileImageView;
+    @Bind(R.id.nameEditText) EditText nameEditText;
+    @Bind(R.id.programEditText) EditText programEditText;
+    @Bind(R.id.mobileEditText) EditText mobileEditText;
+    @Bind(R.id.changePictureBtn) Button changePictureButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((KesaApplication) getApplication()).getComponent().inject(this); // Dependency Injection
         setContentView(R.layout.activity_edit_profile);
         setUpToolbar();
 
-        Button changePictureBtn = (Button) findViewById(R.id.changePictureBtn);
-        changePictureBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Prompting to select a profile image from the gallery
-                Intent intent = new Intent(Intent.ACTION_PICK, Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image/*");
-                startActivityForResult(
-                    Intent.createChooser(intent, null),
-                    PICTURE_SELECTION_REQUEST_CODE);
-            }
-        });
-
-        // Finding view components from the layout.
-        profileImageView = (ImageView) findViewById(R.id.profileImageView);
-        nameEditText = (EditText) findViewById(R.id.nameEditText);
-        programEditText = (EditText) findViewById(R.id.programEditText);
-        mobileEditText = (EditText) findViewById(R.id.mobileEditText);
+        // Dependency Injections
+        ButterKnife.bind(this);
+        ((KesaApplication) getApplication()).getComponent().inject(this);
 
         // Retrieving the profile information of the user.
         profileManager
             .registerActivity(this)
-            .get("1", new Observer<User>() {
-                // TODO(hongil): Refactor an observer class for retrieving profile info.
+            .get(accountManager.getCurrentUserUid(), new Observer<User>() {
                 @Override
                 public void onCompleted() {
                     // Complete method is not necessary in this case.
@@ -90,14 +80,26 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 @Override
                 public void onNext(User user) {
-                    // Pre-filling the profile information.
-                    nameEditText.setText(user.getName());
-                    programEditText.setText(user.getProgram());
-                    mobileEditText.setText(user.getMobile());
-                    profileImageView.setImageBitmap(imageEncoder.decodeBase64(user
-                        .getProfileImage()));
+                    if (user != null) {
+                        // Pre-filling the profile information.
+                        nameEditText.setText(user.getName());
+                        programEditText.setText(user.getProgram());
+                        mobileEditText.setText(user.getMobile());
+                        profileImageView.setImageBitmap(
+                            imageEncoder.decodeBase64(user.getProfileImage()));
+                    }
                 }
             });
+    }
+
+    @OnClick(R.id.changePictureBtn)
+    void onChangePictureButtonClickEvent() {
+        // Prompting to select a profile image from the gallery
+        Intent intent = new Intent(Intent.ACTION_PICK, Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(
+            Intent.createChooser(intent, null),
+            PICTURE_SELECTION_REQUEST_CODE);
     }
 
     @Override
@@ -106,38 +108,6 @@ public class EditProfileActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == PICTURE_SELECTION_REQUEST_CODE) {
             profileImageView.setImageBitmap(getSelectedBitmap(data));
         }
-    }
-
-    /** Retrieves selected profile {@link Bitmap} from the given {@code data}. */
-    private Bitmap getSelectedBitmap(Intent data) {
-        Uri selectedImageUri = data.getData();
-        String[] projection = {MediaStore.MediaColumns.DATA};
-        CursorLoader cursorLoader =
-            new CursorLoader(this, selectedImageUri, projection, null, null, null);
-
-        Cursor cursor = cursorLoader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-
-        cursor.moveToFirst();
-        String selectedImagePath = cursor.getString(column_index);
-        return BitmapFactory.decodeFile(selectedImagePath, null);
-    }
-
-    private User getUser() {
-        // TODO(hongil): Validate input!
-        String name = nameEditText.getText().toString();
-        String program = programEditText.getText().toString();
-        String mobile = mobileEditText.getText().toString();
-        String profileImage = imageEncoder.encodeToBase64(
-            ((BitmapDrawable) profileImageView.getDrawable()).getBitmap());
-        return new User("1", name, program, mobile, profileImage);
-    }
-
-    private void setUpToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -155,13 +125,89 @@ public class EditProfileActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_done:
+                User currentUser = getCurrentUserData();
+                if (!validate(currentUser)) {
+                    return false;
+                }
+
                 profileManager
                     .registerActivity(this)
-                    .saveOrUpdate(getUser());
+                    .saveOrUpdate(currentUser, new OnCompleteListener() {
+                        @Override
+                        public void onComplete() {
+                            Intent profileIntent =
+                                new Intent(getApplicationContext(), ProfileActivity.class);
+                            startActivity(profileIntent);
+                            finish();
+                        }
+                    });
+
                 return true;
 
             default:
                 return false;
         }
+    }
+
+    private boolean validate(User currentUser) {
+        // Checking the format of the name
+        String name = currentUser.getName();
+        if (name.isEmpty()) {
+            nameEditText.setError("Enter a valid name.");
+            return false;
+        }
+
+        // Checking the format of the program
+        String program = currentUser.getProgram();
+        if (program.isEmpty()) {
+            programEditText.setError("Enter a valid program.");
+            return false;
+        }
+
+        // Checking the format of the mobile
+        String mobile = currentUser.getMobile();
+        if (mobile.isEmpty() || !TextUtils.isDigitsOnly(mobile)) {
+            mobileEditText.setError("Enter a valid mobile.");
+            return false;
+        }
+
+        return true;
+    }
+
+    /** Retrieves selected profile {@link Bitmap} from the given {@code data}. */
+    private Bitmap getSelectedBitmap(Intent data) {
+        Uri selectedImageUri = data.getData();
+        String[] projection = {MediaStore.MediaColumns.DATA};
+        CursorLoader cursorLoader =
+            new CursorLoader(this, selectedImageUri, projection, null, null, null);
+
+        Cursor cursor = cursorLoader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+
+        cursor.moveToFirst();
+        String selectedImagePath = cursor.getString(column_index);
+        return BitmapFactory.decodeFile(selectedImagePath, null);
+    }
+
+    private User getCurrentUserData() {
+        String name = nameEditText.getText().toString();
+        String program = programEditText.getText().toString();
+        String mobile = mobileEditText.getText().toString();
+        String profileImage = imageEncoder.encodeToBase64(
+            ((BitmapDrawable) profileImageView.getDrawable()).getBitmap());
+
+        return new User(
+            accountManager.getCurrentUserUid(),
+            name,
+            program,
+            mobile,
+            profileImage);
+    }
+
+    private void setUpToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

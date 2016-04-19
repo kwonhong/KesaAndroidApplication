@@ -10,6 +10,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.google.common.base.Optional;
 import com.kesa.R;
+import com.kesa.util.OnCompleteListener;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class ProfileManagerFirebaseImpl extends ProfileManager {
     }
 
     @Override
-    public void saveOrUpdate(User user) {
+    public void saveOrUpdate(final User user, final OnCompleteListener onCompleteListener) {
         checkNotNull(user);
         checkState(activity != null, "Activity must be registered.");
 
@@ -65,7 +66,7 @@ public class ProfileManagerFirebaseImpl extends ProfileManager {
 
                 // Success case.
                 progressDialog.dismiss();
-                activity.finish();
+                onCompleteListener.onComplete();
             }
         });
     }
