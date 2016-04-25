@@ -14,8 +14,9 @@ import android.widget.TextView;
 
 import com.kesa.account.AccountManager;
 import com.kesa.app.KesaApplication;
+import com.kesa.members.MembersFragment;
 import com.kesa.profile.ProfileActivity;
-import com.kesa.profile.ProfileManager;
+import com.kesa.profile.UserManager;
 import com.kesa.profile.User;
 import com.kesa.util.ImageEncoder;
 
@@ -27,7 +28,7 @@ import rx.Observer;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Inject ProfileManager profileManager;
+    @Inject UserManager profileManager;
     @Inject AccountManager accountManager;
     @Inject ImageEncoder imageEncoder;
 
@@ -91,10 +92,11 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.members:
                         // Insert the fragment by replacing any existing fragment
-                        getFragmentManager()
+                        getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.frame, new MembersFragment())
                                 .commit();
+                        return true;
 
                     default:
                         return false;
@@ -132,5 +134,10 @@ public class MainActivity extends AppCompatActivity {
                         programTextView.setText(user.getProgram());
                     }
                 });
+
+        getSupportFragmentManager()
+            .beginTransaction()
+            .replace(R.id.frame, new MembersFragment())
+            .commit();
     }
 }

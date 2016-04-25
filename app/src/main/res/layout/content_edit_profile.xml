@@ -38,7 +38,7 @@
                     android:drawablePadding="10dp"
                     android:drawableStart="@drawable/ic_profile"
                     android:fontFamily="sans-serif"
-                    android:hint="@string/name_text_view_hint"
+                    android:hint="@string/name_edit_text_view_hint"
                     android:inputType="textPersonName"
                     android:maxLines="1"
                     android:paddingBottom="20dp"
@@ -55,6 +55,7 @@
                 android:background="@color/colorBackgroundNull"/>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/program"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/divider"
@@ -68,7 +69,37 @@
                     android:drawablePadding="10dp"
                     android:drawableStart="@drawable/ic_program"
                     android:fontFamily="sans-serif"
-                    android:hint="@string/program_text_view_hint"
+                    android:hint="@string/program_edit_text_view_hint"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:paddingBottom="20dp"
+                    android:paddingTop="10dp"
+                    android:singleLine="true"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <View
+                android:id="@+id/secondDivider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/program"
+                android:background="@color/colorBackgroundNull"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/secondDivider"
+                android:layout_marginTop="4dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/admissionYearEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:drawablePadding="10dp"
+                    android:drawableStart="@drawable/ic_program"
+                    android:fontFamily="sans-serif"
+                    android:hint="@string/admission_year_edit_text_hint"
                     android:inputType="text"
                     android:maxLines="1"
                     android:paddingBottom="20dp"
@@ -106,7 +137,7 @@
                     android:drawablePadding="10dp"
                     android:drawableStart="@drawable/ic_mobile_black"
                     android:fontFamily="sans-serif"
-                    android:hint="@string/phone_number_text_view_hint"
+                    android:hint="@string/phone_number_edit_text_view_hint"
                     android:inputType="phone"
                     android:maxLines="1"
                     android:paddingBottom="20dp"

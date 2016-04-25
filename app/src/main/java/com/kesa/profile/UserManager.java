@@ -14,12 +14,12 @@ import rx.Observer;
  *
  * @author hongil
  */
-public abstract class ProfileManager {
+public abstract class UserManager {
 
     /** Mainly used to make the transactions synchronous by prompting a {@link ProgressDialog}. */
     protected Activity activity;
 
-    public ProfileManager registerActivity(Activity activity) {
+    public UserManager registerActivity(Activity activity) {
         this.activity = activity;
         return this;
     }
@@ -46,4 +46,6 @@ public abstract class ProfileManager {
      * @throws IllegalStateException if {@code activity} is not registered
      */
     public abstract void getMembers(final Observer<User> userObserver, Optional<String> query);
+
+    public abstract void getExecutives(final Observer<User> userObserver);
 }

@@ -28,6 +28,14 @@ public class User {
     @Setter
     private String profileImage;
 
+    @Getter
+    @Setter
+    private int admissionYear;
+
+    @Getter
+    @Setter
+    private int roleId;
+
     public User() {
         // Empty default constructor, necessary for Firebase to be able to deserialize.
     }

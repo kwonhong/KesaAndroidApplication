@@ -30,9 +30,9 @@
     <string name="prompt_password">Password (optional)</string>
 
     <!-- EditTextView Hint Strings-->
-    <string name="name_text_view_hint">Name</string>
-    <string name="program_text_view_hint">Program</string>
-    <string name="phone_number_text_view_hint">Phone Number</string>
+    <string name="name_edit_text_view_hint">Name</string>
+    <string name="program_edit_text_view_hint">Program</string>
+    <string name="phone_number_edit_text_view_hint">Phone Number</string>
     <string name="email_edit_text_hint">Email</string>
     <string name="password_edit_text_hint">Password</string>
     <string name="name_edit_text_hint">Name</string>
@@ -45,5 +45,7 @@
     <string name="title_activity_sign_up">SignUpActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_edit_profile">EditProfileActivity</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="admission_year_edit_text_hint">Admission Year</string>
 
 </resources>

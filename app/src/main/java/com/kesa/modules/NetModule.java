@@ -6,8 +6,8 @@ import android.content.res.Resources;
 import com.firebase.client.Firebase;
 import com.kesa.account.AccountManager;
 import com.kesa.account.AccountManagerFireBaseImpl;
-import com.kesa.profile.ProfileManager;
-import com.kesa.profile.ProfileManagerFirebaseImpl;
+import com.kesa.profile.UserManager;
+import com.kesa.profile.UserManagerFirebaseImpl;
 import com.kesa.util.ImageEncoder;
 
 import javax.inject.Singleton;
@@ -24,8 +24,8 @@ import dagger.Provides;
 public class NetModule {
     @Provides
     @Singleton
-    ProfileManager provideProfileManager(Firebase firebase, Resources resources) {
-        return new ProfileManagerFirebaseImpl(firebase, resources);
+    UserManager provideProfileManager(Firebase firebase, Resources resources) {
+        return new UserManagerFirebaseImpl(firebase, resources);
     }
 
     @Provides

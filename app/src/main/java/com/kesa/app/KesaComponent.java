@@ -1,8 +1,11 @@
 package com.kesa.app;
 
+import com.kesa.members.ExecutiveMemberFragment;
+import com.kesa.members.NormalMemberFragment;
+import com.kesa.members.SearchActivity;
 import com.kesa.account.LoginActivity;
 import com.kesa.MainActivity;
-import com.kesa.MembersFragment;
+import com.kesa.members.MembersFragment;
 import com.kesa.account.SignUpActivity;
 import com.kesa.modules.AppModule;
 import com.kesa.modules.NetModule;
@@ -26,7 +29,10 @@ public interface KesaComponent {
     void inject(EditProfileActivity editProfileActivity);
     void inject(ProfileActivity profileActivity);
     void inject(LoginActivity loginActivity);
+    void inject(SearchActivity searchActivity);
     void inject(SignUpActivity signUpActivity);
 
     void inject(MembersFragment membersFragment);
+    void inject(NormalMemberFragment normalMemberFragment);
+    void inject(ExecutiveMemberFragment executiveMemberFragment);
 }

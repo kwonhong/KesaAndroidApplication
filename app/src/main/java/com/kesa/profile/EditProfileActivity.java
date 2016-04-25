@@ -43,7 +43,7 @@ public class EditProfileActivity extends AppCompatActivity {
     /** Used to inform that the activity has been started from picture selection. */
     private static final int PICTURE_SELECTION_REQUEST_CODE = 1000;
 
-    @Inject ProfileManager profileManager;
+    @Inject UserManager profileManager;
     @Inject AccountManager accountManager;
     @Inject ImageEncoder imageEncoder;
 
@@ -51,6 +51,7 @@ public class EditProfileActivity extends AppCompatActivity {
     @Bind(R.id.nameEditText) EditText nameEditText;
     @Bind(R.id.programEditText) EditText programEditText;
     @Bind(R.id.mobileEditText) EditText mobileEditText;
+    @Bind(R.id.admissionYearEditText) EditText admissionYearEditText;
     @Bind(R.id.changePictureBtn) Button changePictureButton;
 
     @Override
@@ -85,6 +86,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         nameEditText.setText(user.getName());
                         programEditText.setText(user.getProgram());
                         mobileEditText.setText(user.getMobile());
+                        admissionYearEditText.setText(Integer.toString(user.getAdmissionYear()));
                         profileImageView.setImageBitmap(
                             imageEncoder.decodeBase64(user.getProfileImage()));
                     }
@@ -164,6 +166,13 @@ public class EditProfileActivity extends AppCompatActivity {
             return false;
         }
 
+        // Checking the format of the year
+        int admissionYear = currentUser.getAdmissionYear();
+        if (admissionYear == -1) {
+            admissionYearEditText.setError("Enter a valid admission year.");
+            return false;
+        }
+
         // Checking the format of the mobile
         String mobile = currentUser.getMobile();
         if (mobile.isEmpty() || !TextUtils.isDigitsOnly(mobile)) {
@@ -196,12 +205,18 @@ public class EditProfileActivity extends AppCompatActivity {
         String profileImage = imageEncoder.encodeToBase64(
             ((BitmapDrawable) profileImageView.getDrawable()).getBitmap());
 
+        String admissionYearString = (admissionYearEditText.getText().toString());
+        int admissionYear = (TextUtils.isDigitsOnly(admissionYearString)) ?
+            Integer.parseInt(admissionYearString) : -1;
+
         return new User(
             accountManager.getCurrentUserUid(),
             name,
             program,
             mobile,
-            profileImage);
+            profileImage,
+            admissionYear,
+            Role.MEMBER.getRoleId());
     }
 
     private void setUpToolbar() {

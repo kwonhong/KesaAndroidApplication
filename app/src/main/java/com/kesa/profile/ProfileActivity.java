@@ -31,7 +31,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     public static final String UID_EXTRA ="UidExtra";
 
-    @Inject ProfileManager profileManager;
+    @Inject UserManager profileManager;
     @Inject AccountManager accountManager;
     @Inject ImageEncoder imageEncoder;
 

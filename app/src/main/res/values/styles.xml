@@ -52,4 +52,13 @@
         <item name="android:hint">@string/search_hint</item>
     </style>
 
+    <!-- Tab Layout Styling-->
+    <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textColor">@color/md_white_1000</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+
 </resources>

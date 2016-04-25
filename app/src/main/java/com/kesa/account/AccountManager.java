@@ -4,12 +4,13 @@ package com.kesa.account;
 import android.app.Activity;
 import android.app.ProgressDialog;
 
+import com.kesa.app.KesaApplication;
 import com.kesa.util.OnCompleteListener;
 
 /**
- * A manager handling authentication into your application.
+ * A manager handling authentication into the {@link KesaApplication}.
  *
- * @author hongil@
+ * @author hongil
  */
 public abstract class AccountManager {
 

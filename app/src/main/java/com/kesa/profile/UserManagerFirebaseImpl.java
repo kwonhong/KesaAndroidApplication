@@ -24,11 +24,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * A {@link ProfileManager} implementation with {@link Firebase} API.
+ * A {@link UserManager} implementation with {@link Firebase} API.
  *
  * @author hongil@
  */
-public class ProfileManagerFirebaseImpl extends ProfileManager {
+public class UserManagerFirebaseImpl extends UserManager {
 
     /** A Firebase-key containing all the users' data. */
     private static final String FIREBASE_USER = "users";
@@ -38,7 +38,7 @@ public class ProfileManagerFirebaseImpl extends ProfileManager {
     private Map<String, User> members;
 
     @Inject
-    public ProfileManagerFirebaseImpl(Firebase firebase, Resources resources) {
+    public UserManagerFirebaseImpl(Firebase firebase, Resources resources) {
         this.firebase = firebase.child(FIREBASE_USER);
         this.resources = resources;
         this.members = Collections.synchronizedMap(new HashMap<String, User>());
@@ -141,6 +141,55 @@ public class ProfileManagerFirebaseImpl extends ProfileManager {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         User user = snapshot.getValue(User.class);
                         if (!query.isPresent() || user.getName().contains(query.get())) {
+                            userObserver.onNext(user);
+                        }
+                    }
+
+                    progressDialog.dismiss();
+                    userObserver.onCompleted();
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    progressDialog.dismiss();
+                }
+            });
+    }
+
+    @Override
+    public void getExecutives(final Observer<User> userObserver) {
+        checkNotNull(userObserver);
+        checkState(activity != null, "Activity must be registered.");
+
+        // Checking if the data has been cached.
+        if (!members.isEmpty()) {
+            for (User user : members.values()) {
+                if (Role.getRole(user.getRoleId()).isInGroup(Role.Group.EXECUTIVE)) {
+                    userObserver.onNext(user);
+                }
+            }
+
+            userObserver.onCompleted();
+            return;
+        }
+
+        // No data is available. Fetch the data with Firebase API.
+        final ProgressDialog progressDialog =
+            ProgressDialog.show(
+                activity,
+                null,
+                resources.getString(R.string.retrieving_user_dialog_message),
+                false,
+                false);
+        progressDialog.show();
+
+        firebase
+            .addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        User user = snapshot.getValue(User.class);
+                        if (Role.getRole(user.getRoleId()).isInGroup(Role.Group.EXECUTIVE)) {
                             userObserver.onNext(user);
                         }
                     }

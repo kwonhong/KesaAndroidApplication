@@ -48,6 +48,11 @@
             android:label="@string/title_activity_sign_up"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".members.SearchActivity"
+            android:label="@string/title_activity_search"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
