@@ -10,7 +10,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.google.common.base.Optional;
 import com.kesa.R;
-import com.kesa.util.OnCompleteListener;
+import com.kesa.util.ResultHandler;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,7 +46,7 @@ public class UserManagerFirebaseImpl extends UserManager {
     }
 
     @Override
-    public void saveOrUpdate(final User user, final OnCompleteListener onCompleteListener) {
+    public void saveOrUpdate(final User user, final ResultHandler onCompleteListener) {
         checkNotNull(user);
         checkState(activity != null, "Activity must be registered.");
 

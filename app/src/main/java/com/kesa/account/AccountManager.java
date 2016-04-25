@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 
 import com.kesa.app.KesaApplication;
-import com.kesa.util.OnCompleteListener;
+import com.kesa.util.ResultHandler;
 
 /**
  * A manager handling authentication into the {@link KesaApplication}.
@@ -24,37 +24,44 @@ public abstract class AccountManager {
 
     /**
      * Synchronously authenticates into the application using the given {@code email} and {@code
-     * password} by displaying a {@link ProgressDialog}. On authentication error, the method prompt
-     * an alert dialog with the registered {@code activity}.
+     * password} by displaying a {@link ProgressDialog}. On authentication error, the method invokes
+     * {@link ResultHandler#onError(Exception)} method.
      *
-     * @param onCompleteListener a callback method being called on authentication success
+     * @param resultHandler a callback method handling a success/error case of authentication
      * @throws IllegalStateException if {@code activity} is not registered.
      */
     public abstract void authenticateWithPassword(
         final String email,
         final String password,
-        final OnCompleteListener onCompleteListener);
-
-    /** Returns the unique identifier of the authenticated user. */
-    public abstract String getCurrentUserUid();
+        final ResultHandler resultHandler);
 
     /**
      * Synchronously creates a new account with given {@code email} and {@code password} by
-     * displaying a {@link ProgressDialog}.
+     * displaying a {@link ProgressDialog}. On error, the method invokes
+     * {@link ResultHandler#onError(Exception)} method.
      *
-     * @param onCompleteListener a callback method being called on authentication success
+     * @param resultHandler a callback method being called on authentication success
      * @throws IllegalStateException if {@code activity} is not registered.
      */
     public abstract void createAccount(
         final String email,
         final String password,
-        final OnCompleteListener onCompleteListener);
+        final ResultHandler resultHandler);
+
+    /** Returns the unique identifier of the authenticated user. */
+    public abstract String getCurrentUserUid();
 
     // TODO(hongil): Add javadoc
-    public abstract void changePassword(String email, String oldPassword, String newPassword);
+    public abstract void changePassword(
+        final String email,
+        final String oldPassword,
+        final String newPassword);
 
     // TODO(hongil): Add javadoc
-    public abstract void changeEmail(String oldEmail, String newEmail, String password);
+    public abstract void changeEmail(
+        final String oldEmail,
+        final String newEmail,
+        final String password);
 
 
 }

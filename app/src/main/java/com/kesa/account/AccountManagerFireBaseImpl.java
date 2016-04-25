@@ -8,7 +8,7 @@ import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.kesa.R;
-import com.kesa.util.OnCompleteListener;
+import com.kesa.util.ResultHandler;
 
 import java.util.Map;
 
@@ -17,19 +17,29 @@ import javax.inject.Inject;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+/**
+ * An implementation of {@link AccountManager} with Firebase Authentication API.
+ *
+ * @author hongil
+ */
 public class AccountManagerFireBaseImpl extends AccountManager {
 
-    private static final String CURRENT_USER_UID = "CurrentUserUid";
+    /**
+     * A key to retrieve the uid of the authenticated user from the
+     * {@link SharedPreferences} file.
+     */
+    private static final String AUTHENTICATED_UID = "AuthenticatedUid";
 
+    private final SharedPreferences sharedPreferences;
     private final Firebase firebase;
     private final Resources resources;
-    private final SharedPreferences sharedPreferences;
 
     @Inject
     public AccountManagerFireBaseImpl(
         Resources resources,
         Firebase firebase,
         SharedPreferences sharedPreferences) {
+
         this.sharedPreferences = sharedPreferences;
         this.firebase = firebase;
         this.resources = resources;
@@ -39,49 +49,49 @@ public class AccountManagerFireBaseImpl extends AccountManager {
     public void authenticateWithPassword(
         final String email,
         final String password,
-        final OnCompleteListener onCompleteListener) {
+        final ResultHandler resultHandler) {
+
         checkNotNull(email);
         checkNotNull(password);
+        checkNotNull(resultHandler);
         checkState(activity != null, "Activity must be registered before authentication.");
 
         final ProgressDialog progressDialog =
-                ProgressDialog.show(
-                        activity,
-                        null,
-                        resources.getString(R.string.authenticate_dialog_message),
-                        false,
-                        false);
+            ProgressDialog.show(
+                activity,
+                null,
+                resources.getString(R.string.authenticate_dialog_message),
+                false,
+                false);
         progressDialog.show();
         firebase.authWithPassword(email, password, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
                 sharedPreferences
                     .edit()
-                    .putString(CURRENT_USER_UID, authData.getUid())
+                    .putString(AUTHENTICATED_UID, authData.getUid())
                     .apply();
                 progressDialog.dismiss();
-                onCompleteListener.onComplete();
+                resultHandler.onComplete();
             }
 
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {
                 progressDialog.dismiss();
+                resultHandler.onError(firebaseError.toException());
             }
         });
-    }
-
-    @Override
-    public String getCurrentUserUid() {
-        return sharedPreferences.getString(CURRENT_USER_UID, null);
     }
 
     @Override
     public void createAccount(
         final String email,
         final String password,
-        final OnCompleteListener onCompleteListener) {
+        final ResultHandler resultHandler) {
+
         checkNotNull(email);
         checkNotNull(password);
+        checkNotNull(resultHandler);
         checkState(activity != null, "Activity must be registered before authentication.");
 
         final ProgressDialog progressDialog =
@@ -92,38 +102,51 @@ public class AccountManagerFireBaseImpl extends AccountManager {
                 false,
                 false);
         progressDialog.show();
-        firebase.createUser(email, password, new Firebase.ValueResultHandler<Map<String, Object>>() {
-            @Override
-            public void onSuccess(Map<String, Object> stringObjectMap) {
-                sharedPreferences
-                    .edit()
-                    .putString(CURRENT_USER_UID, (String) stringObjectMap.get("uid"))
-                    .apply();
-                progressDialog.dismiss();
-                onCompleteListener.onComplete();
-            }
+        firebase.createUser(
+            email,
+            password,
+            new Firebase.ValueResultHandler<Map<String, Object>>() {
+                @Override
+                public void onSuccess(Map<String, Object> stringObjectMap) {
+                    sharedPreferences
+                        .edit()
+                        .putString(AUTHENTICATED_UID, (String) stringObjectMap.get("uid"))
+                        .apply();
+                    progressDialog.dismiss();
+                    resultHandler.onComplete();
+                }
 
-            @Override
-            public void onError(FirebaseError firebaseError) {
-
-            }
-        });
+                @Override
+                public void onError(FirebaseError firebaseError) {
+                    progressDialog.dismiss();
+                    resultHandler.onError(firebaseError.toException());
+                }
+            });
     }
 
     @Override
-    public void changePassword(String email, String oldPassword, String newPassword) {
+    public String getCurrentUserUid() {
+        return sharedPreferences.getString(AUTHENTICATED_UID, null);
+    }
+
+    @Override
+    public void changePassword(
+        final String email,
+        final String oldPassword,
+        final String newPassword) {
+
         checkNotNull(email);
         checkNotNull(oldPassword);
         checkNotNull(newPassword);
         checkState(activity != null, "Activity must be registered before authentication.");
 
         final ProgressDialog progressDialog =
-                ProgressDialog.show(
-                        activity,
-                        null,
-                        resources.getString(R.string.change_password_dialog_message),
-                        false,
-                        false);
+            ProgressDialog.show(
+                activity,
+                null,
+                resources.getString(R.string.change_password_dialog_message),
+                false,
+                false);
         progressDialog.show();
         firebase.changePassword(email, oldPassword, newPassword, new Firebase.ResultHandler() {
             @Override
@@ -139,19 +162,23 @@ public class AccountManagerFireBaseImpl extends AccountManager {
     }
 
     @Override
-    public void changeEmail(String oldEmail, String newEmail, String password) {
+    public void changeEmail(
+        final String oldEmail,
+        final String newEmail,
+        final String password) {
+
         checkNotNull(oldEmail);
         checkNotNull(newEmail);
         checkNotNull(password);
         checkState(activity != null, "Activity must be registered before authentication.");
 
         final ProgressDialog progressDialog =
-                ProgressDialog.show(
-                        activity,
-                        null,
-                        resources.getString(R.string.change_email_dialog_message),
-                        false,
-                        false);
+            ProgressDialog.show(
+                activity,
+                null,
+                resources.getString(R.string.change_email_dialog_message),
+                false,
+                false);
         progressDialog.show();
         firebase.changeEmail(oldEmail, password, newEmail, new Firebase.ResultHandler() {
             @Override

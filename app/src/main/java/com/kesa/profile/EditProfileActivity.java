@@ -24,7 +24,7 @@ import com.kesa.R;
 import com.kesa.account.AccountManager;
 import com.kesa.app.KesaApplication;
 import com.kesa.util.ImageEncoder;
-import com.kesa.util.OnCompleteListener;
+import com.kesa.util.ResultHandler;
 
 import javax.inject.Inject;
 
@@ -40,13 +40,15 @@ import rx.Observer;
  */
 public class EditProfileActivity extends AppCompatActivity {
 
+    /** A key to retrieve the user name of the current user from an {@link Intent}. */
+    public static final String USER_NAME = "UserName";
+
     /** Used to inform that the activity has been started from picture selection. */
     private static final int PICTURE_SELECTION_REQUEST_CODE = 1000;
 
     @Inject UserManager profileManager;
     @Inject AccountManager accountManager;
     @Inject ImageEncoder imageEncoder;
-
     @Bind(R.id.profileImageView) ImageView profileImageView;
     @Bind(R.id.nameEditText) EditText nameEditText;
     @Bind(R.id.programEditText) EditText programEditText;
@@ -64,34 +66,16 @@ public class EditProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         ((KesaApplication) getApplication()).getComponent().inject(this);
 
-        // Retrieving the profile information of the user.
-        profileManager
-            .registerActivity(this)
-            .get(accountManager.getCurrentUserUid(), new Observer<User>() {
-                @Override
-                public void onCompleted() {
-                    // Complete method is not necessary in this case.
-                }
+        // Intent contains userName extra data iff the activity has been started from
+        // SignUpActivity.
+        String userName = getIntent().getStringExtra(USER_NAME);
+        if (userName != null) {
+            nameEditText.setText(userName);
+            return;
+        }
 
-                @Override
-                public void onError(Throwable e) {
-                    // TODO(hongil): Handle error cases.
-                    // ex) Network Error, Failing to receive information from Firebase API error
-                }
-
-                @Override
-                public void onNext(User user) {
-                    if (user != null) {
-                        // Pre-filling the profile information.
-                        nameEditText.setText(user.getName());
-                        programEditText.setText(user.getProgram());
-                        mobileEditText.setText(user.getMobile());
-                        admissionYearEditText.setText(Integer.toString(user.getAdmissionYear()));
-                        profileImageView.setImageBitmap(
-                            imageEncoder.decodeBase64(user.getProfileImage()));
-                    }
-                }
-            });
+        // Otherwise, retrieve the profile information of the current user.
+        retrieveProfileData();
     }
 
     @OnClick(R.id.changePictureBtn)
@@ -134,7 +118,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 profileManager
                     .registerActivity(this)
-                    .saveOrUpdate(currentUser, new OnCompleteListener() {
+                    .saveOrUpdate(currentUser, new ResultHandler() {
                         @Override
                         public void onComplete() {
                             Intent profileIntent =
@@ -142,6 +126,12 @@ public class EditProfileActivity extends AppCompatActivity {
                             startActivity(profileIntent);
                             finish();
                         }
+
+                        @Override
+                        public void onError(Exception exception) {
+
+                        }
+
                     });
 
                 return true;
@@ -149,6 +139,36 @@ public class EditProfileActivity extends AppCompatActivity {
             default:
                 return false;
         }
+    }
+
+    private void retrieveProfileData() {
+        profileManager
+            .registerActivity(this)
+            .get(accountManager.getCurrentUserUid(), new Observer<User>() {
+                @Override
+                public void onCompleted() {
+                    // Complete method is not necessary in this case.
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    // TODO(hongil): Handle error cases.
+                    // ex) Network Error, Failing to receive information from Firebase API error
+                }
+
+                @Override
+                public void onNext(User user) {
+                    if (user != null) {
+                        // Pre-filling the profile information.
+                        nameEditText.setText(user.getName());
+                        programEditText.setText(user.getProgram());
+                        mobileEditText.setText(user.getMobile());
+                        admissionYearEditText.setText(Integer.toString(user.getAdmissionYear()));
+                        profileImageView.setImageBitmap(
+                            imageEncoder.decodeBase64(user.getProfileImage()));
+                    }
+                }
+            });
     }
 
     private boolean validate(User currentUser) {

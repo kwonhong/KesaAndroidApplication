@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 
 import com.google.common.base.Optional;
 import com.kesa.app.KesaApplication;
-import com.kesa.util.OnCompleteListener;
+import com.kesa.util.ResultHandler;
 
 import rx.Observer;
 
@@ -29,7 +29,7 @@ public abstract class UserManager {
      *
      * @throws IllegalStateException if {@code activity} is not registered
      */
-    public abstract void saveOrUpdate(final User user, final OnCompleteListener onCompleteListener);
+    public abstract void saveOrUpdate(final User user, final ResultHandler onCompleteListener);
 
     /**
      * Retrieves the profile data of the given {@code uid}.
