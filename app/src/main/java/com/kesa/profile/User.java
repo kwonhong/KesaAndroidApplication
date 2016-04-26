@@ -30,11 +30,19 @@ public class User {
 
     @Getter
     @Setter
+    private String email;
+
+    @Getter
+    @Setter
     private int admissionYear;
 
     @Getter
     @Setter
     private int roleId;
+
+    @Getter
+    @Setter
+    private boolean isContactPublic;
 
     public User() {
         // Empty default constructor, necessary for Firebase to be able to deserialize.

@@ -47,5 +47,7 @@
     <string name="title_activity_edit_profile">EditProfileActivity</string>
     <string name="title_activity_search">SearchActivity</string>
     <string name="admission_year_edit_text_hint">Admission Year</string>
+    <string name="publicize_switch_content">Making the contact information visible to anyone. By default, the contact information is only visible to executive members.</string>
+    <string name="publicize_switch_title">Publicize contact information</string>
 
 </resources>

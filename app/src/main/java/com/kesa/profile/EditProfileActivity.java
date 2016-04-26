@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -40,8 +41,11 @@ import rx.Observer;
  */
 public class EditProfileActivity extends AppCompatActivity {
 
-    /** A key to retrieve the user name of the current user from an {@link Intent}. */
+    /** A key to retrieve the user's name from an {@link Intent}. */
     public static final String USER_NAME = "UserName";
+
+    /** A key to retrieve the user's email from an {@link Intent}. */
+    public static final String USER_EMAIL = "UserEmail";
 
     /** Used to inform that the activity has been started from picture selection. */
     private static final int PICTURE_SELECTION_REQUEST_CODE = 1000;
@@ -53,8 +57,10 @@ public class EditProfileActivity extends AppCompatActivity {
     @Bind(R.id.nameEditText) EditText nameEditText;
     @Bind(R.id.programEditText) EditText programEditText;
     @Bind(R.id.mobileEditText) EditText mobileEditText;
+    @Bind(R.id.emailEditText) EditText emailEditText;
     @Bind(R.id.admissionYearEditText) EditText admissionYearEditText;
     @Bind(R.id.changePictureBtn) Button changePictureButton;
+    @Bind(R.id.publicizeSwitch) SwitchCompat publicizeSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +75,10 @@ public class EditProfileActivity extends AppCompatActivity {
         // Intent contains userName extra data iff the activity has been started from
         // SignUpActivity.
         String userName = getIntent().getStringExtra(USER_NAME);
-        if (userName != null) {
+        String userEmail = getIntent().getStringExtra(USER_EMAIL);
+        if (userName != null && userEmail != null) {
             nameEditText.setText(userName);
+            emailEditText.setText(userEmail);
             return;
         }
 
@@ -107,15 +115,18 @@ public class EditProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                // Going back to the previous activity.
                 finish();
                 return true;
 
             case R.id.action_done:
+                // Validating the inputs from the user
                 User currentUser = getCurrentUserData();
                 if (!validate(currentUser)) {
                     return false;
                 }
 
+                // Saving the profile information
                 profileManager
                     .registerActivity(this)
                     .saveOrUpdate(currentUser, new ResultHandler() {
@@ -200,6 +211,13 @@ public class EditProfileActivity extends AppCompatActivity {
             return false;
         }
 
+        // Checking the format of the email
+        String email = currentUser.getEmail();
+        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailEditText.setError("Enter a valid email.");
+            return false;
+        }
+
         return true;
     }
 
@@ -222,8 +240,10 @@ public class EditProfileActivity extends AppCompatActivity {
         String name = nameEditText.getText().toString();
         String program = programEditText.getText().toString();
         String mobile = mobileEditText.getText().toString();
+        String email = emailEditText.getText().toString();
         String profileImage = imageEncoder.encodeToBase64(
             ((BitmapDrawable) profileImageView.getDrawable()).getBitmap());
+        boolean isContactPublic = publicizeSwitch.isChecked();
 
         String admissionYearString = (admissionYearEditText.getText().toString());
         int admissionYear = (TextUtils.isDigitsOnly(admissionYearString)) ?
@@ -235,8 +255,10 @@ public class EditProfileActivity extends AppCompatActivity {
             program,
             mobile,
             profileImage,
+            email,
             admissionYear,
-            Role.MEMBER.getRoleId());
+            Role.MEMBER.getRoleId(),
+            isContactPublic);
     }
 
     private void setUpToolbar() {

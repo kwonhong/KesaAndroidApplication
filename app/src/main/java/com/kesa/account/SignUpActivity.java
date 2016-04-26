@@ -70,6 +70,7 @@ public class SignUpActivity extends AppCompatActivity {
                     editProfileIntent.setFlags(
                         Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     editProfileIntent.putExtra(EditProfileActivity.USER_NAME, name);
+                    editProfileIntent.putExtra(EditProfileActivity.USER_EMAIL, email);
                     startActivity(editProfileIntent);
                     finish();
                 }
