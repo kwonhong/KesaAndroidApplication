@@ -63,7 +63,7 @@ public class NormalMemberFragment extends Fragment {
                         (User) normalMemberExpandableListAdapter
                             .getChild(groupPosition, childPosition);
                     Intent profileIntent = new Intent(getActivity(), ProfileActivity.class);
-                    profileIntent.putExtra(ProfileActivity.UID_EXTRA, currentUser.getUid());
+                    profileIntent.putExtra(ProfileActivity.USER_UID, currentUser.getUid());
                     getActivity().startActivity(profileIntent);
 
                     return true;

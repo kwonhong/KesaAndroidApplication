@@ -32,7 +32,20 @@
                 android:layout_height="150dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
+                android:src="@drawable/profile"
                 app:civ_border_color="#EEEEEE"/>
+
+            <TextView
+                android:id="@+id/admissionYearTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/nameTextView"
+                android:layout_marginEnd="-20dp"
+                android:layout_toStartOf="@id/profileImageView"
+                android:fontFamily="sans-serif"
+                android:text="1T5"
+                android:textSize="30sp"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/nameTextView"
@@ -42,6 +55,7 @@
                 android:layout_centerHorizontal="true"
                 android:fontFamily="sans-serif"
                 android:maxLines="1"
+                android:text="Jennifer Chriso"
                 android:textColor="@color/md_white_1000"
                 android:textStyle="bold"/>
 
@@ -53,6 +67,7 @@
                 android:layout_centerHorizontal="true"
                 android:fontFamily="sans-serif"
                 android:maxLines="1"
+                android:text="Software Engineering"
                 android:textColor="@color/md_white_1000"/>
         </RelativeLayout>
 

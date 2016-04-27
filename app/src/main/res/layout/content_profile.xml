@@ -37,7 +37,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/ivContactItem1"
+                android:id="@+id/mobileIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -48,8 +48,8 @@
                 android:id="@+id/mobileTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/ivContactItem1"
-                android:layout_toRightOf="@id/ivContactItem1"
+                android:layout_toEndOf="@id/mobileIcon"
+                android:layout_toRightOf="@id/mobileIcon"
                 android:fontFamily="sans-serif-medium"
                 android:text="(123) 456-7890"/>
 
@@ -57,9 +57,43 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/mobileTextView"
-                android:layout_toEndOf="@id/ivContactItem1"
-                android:layout_toRightOf="@id/ivContactItem1"
+                android:layout_toEndOf="@id/mobileIcon"
+                android:layout_toRightOf="@id/mobileIcon"
                 android:text="Mobile"
+                android:fontFamily="sans-serif-thin"
+                android:textColor="#727272"/>
+        </RelativeLayout>
+
+        <!-- Mobile Contact Information-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/activity_vertical_margin">
+
+            <ImageView
+                android:id="@+id/emailIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_email_black"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"/>
+
+            <TextView
+                android:id="@+id/emailTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/emailIcon"
+                android:layout_toRightOf="@id/emailIcon"
+                android:fontFamily="sans-serif-medium"
+                android:text="hello@gmail.com"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/emailTextView"
+                android:layout_toEndOf="@id/emailIcon"
+                android:layout_toRightOf="@id/emailIcon"
+                android:text="Email"
                 android:fontFamily="sans-serif-thin"
                 android:textColor="#727272"/>
         </RelativeLayout>

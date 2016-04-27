@@ -29,19 +29,20 @@ import rx.Observer;
  */
 public class ProfileActivity extends AppCompatActivity {
 
-    public static final String UID_EXTRA ="UidExtra";
+    /** A key to retrieve the user's uid from an {@link Intent}. */
+    public static final String USER_UID ="UserUID";
 
     @Inject UserManager profileManager;
     @Inject AccountManager accountManager;
     @Inject ImageEncoder imageEncoder;
-
     @Bind(R.id.nameTextView) TextView nameTextView;
     @Bind(R.id.programTextView) TextView programTextView;
     @Bind(R.id.mobileTextView) TextView mobileTextView;
+    @Bind(R.id.admissionYearTextView) TextView admissionYearTextView;
     @Bind(R.id.profileImageView) ImageView profileImageView;
 
     private boolean isDisplayingCurrentUserProfile; // Default to false
-    private String currentUid;
+    private String userUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,19 +55,19 @@ public class ProfileActivity extends AppCompatActivity {
         ((KesaApplication) getApplication()).getComponent().inject(this);
 
         // Getting the uid of the displaying profile
-        this.currentUid = getIntent().getStringExtra(UID_EXTRA);
-        if (this.currentUid == null) {
+        this.userUid = getIntent().getStringExtra(USER_UID);
+        if (this.userUid == null) {
             isDisplayingCurrentUserProfile = true;
-            this.currentUid = accountManager.getCurrentUserUid();
+            this.userUid = accountManager.getCurrentUserUid();
         }
 
-        updateProfile();
+        getProfileData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        updateProfile();
+        getProfileData();
     }
 
     @Override
@@ -107,10 +108,10 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     /** Updating the profile after retrieving the profile information of the user. */
-    private void updateProfile() {
+    private void getProfileData() {
         profileManager
             .registerActivity(this)
-            .get(currentUid, new Observer<User>() {
+            .get(userUid, new Observer<User>() {
                 @Override
                 public void onCompleted() {
                     // Complete method is not necessary in this case.
