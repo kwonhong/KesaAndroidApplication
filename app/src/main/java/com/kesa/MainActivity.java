@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         // Retrieving the profile information of the user.
         profileManager
                 .registerActivity(this)
-                .get(accountManager.getCurrentUserUid(), new Observer<User>() {
+                .findWithUID(accountManager.getCurrentUserUid(), new Observer<User>() {
                     @Override
                     public void onCompleted() {
                         // Complete method is not necessary in this case.

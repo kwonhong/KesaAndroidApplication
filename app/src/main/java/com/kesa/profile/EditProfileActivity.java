@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +18,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -41,16 +43,22 @@ import rx.Observer;
  */
 public class EditProfileActivity extends AppCompatActivity {
 
-    /** A key to retrieve the user's name from an {@link Intent}. */
+    /**
+     * A key to retrieve the user's name from an {@link Intent}.
+     */
     public static final String USER_NAME = "UserName";
 
-    /** A key to retrieve the user's email from an {@link Intent}. */
+    /**
+     * A key to retrieve the user's email from an {@link Intent}.
+     */
     public static final String USER_EMAIL = "UserEmail";
 
-    /** Used to inform that the activity has been started from picture selection. */
+    /**
+     * Used to inform that the activity has been started from picture selection.
+     */
     private static final int PICTURE_SELECTION_REQUEST_CODE = 1000;
 
-    @Inject UserManager profileManager;
+    @Inject UserManager userManager;
     @Inject AccountManager accountManager;
     @Inject ImageEncoder imageEncoder;
     @Bind(R.id.profileImageView) ImageView profileImageView;
@@ -83,7 +91,7 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         // Otherwise, retrieve the profile information of the current user.
-        retrieveProfileData();
+        retrieveProfile();
     }
 
     @OnClick(R.id.changePictureBtn)
@@ -126,25 +134,8 @@ public class EditProfileActivity extends AppCompatActivity {
                     return false;
                 }
 
-                // Saving the profile information
-                profileManager
-                    .registerActivity(this)
-                    .saveOrUpdate(currentUser, new ResultHandler() {
-                        @Override
-                        public void onComplete() {
-                            Intent profileIntent =
-                                new Intent(getApplicationContext(), ProfileActivity.class);
-                            startActivity(profileIntent);
-                            finish();
-                        }
-
-                        @Override
-                        public void onError(Exception exception) {
-
-                        }
-
-                    });
-
+                // Updating the profile information
+                updateProfile(currentUser);
                 return true;
 
             default:
@@ -152,10 +143,40 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void retrieveProfileData() {
-        profileManager
+    private void updateProfile(final User user) {
+        userManager
             .registerActivity(this)
-            .get(accountManager.getCurrentUserUid(), new Observer<User>() {
+            .saveOrUpdate(user, new ResultHandler() {
+                @Override
+                public void onComplete() {
+                    // Redirecting to ProfileActivity on complete.
+                    Intent profileIntent =
+                        new Intent(getApplicationContext(), ProfileActivity.class);
+                    startActivity(profileIntent);
+                    finish();
+                }
+
+                @Override
+                public void onError(Exception exception) {
+                    // Giving a user another attempt to update.
+                    Snackbar.make(
+                        findViewById(android.R.id.content),
+                        "Unexpected error while saving the information...",
+                        Snackbar.LENGTH_LONG)
+                        .setAction("RETRY", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                updateProfile(user);
+                            }
+                        }).show();
+                }
+            });
+    }
+
+    private void retrieveProfile() {
+        userManager
+            .registerActivity(this)
+            .findWithUID(accountManager.getCurrentUserUid(), new Observer<User>() {
                 @Override
                 public void onCompleted() {
                     // Complete method is not necessary in this case.
@@ -170,16 +191,21 @@ public class EditProfileActivity extends AppCompatActivity {
                 @Override
                 public void onNext(User user) {
                     if (user != null) {
-                        // Pre-filling the profile information.
-                        nameEditText.setText(user.getName());
-                        programEditText.setText(user.getProgram());
-                        mobileEditText.setText(user.getMobile());
-                        admissionYearEditText.setText(Integer.toString(user.getAdmissionYear()));
-                        profileImageView.setImageBitmap(
-                            imageEncoder.decodeBase64(user.getProfileImage()));
+                        fillProfileData(user); // Pre-filling the profile information.
                     }
                 }
             });
+    }
+
+    private void fillProfileData(User user) {
+        nameEditText.setText(user.getName());
+        programEditText.setText(user.getProgram());
+        mobileEditText.setText(user.getMobile());
+        admissionYearEditText.setText(Integer.toString(user.getAdmissionYear()));
+        emailEditText.setText(user.getEmail());
+        profileImageView.setImageBitmap(
+            imageEncoder.decodeBase64(user.getProfileImage()));
+        publicizeSwitch.setChecked(user.isContactPublic());
     }
 
     private boolean validate(User currentUser) {
@@ -221,7 +247,9 @@ public class EditProfileActivity extends AppCompatActivity {
         return true;
     }
 
-    /** Retrieves selected profile {@link Bitmap} from the given {@code data}. */
+    /**
+     * Retrieves selected profile {@link Bitmap} from the given {@code data}.
+     */
     private Bitmap getSelectedBitmap(Intent data) {
         Uri selectedImageUri = data.getData();
         String[] projection = {MediaStore.MediaColumns.DATA};

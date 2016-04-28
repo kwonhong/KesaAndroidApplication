@@ -8,13 +8,10 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.google.common.base.Optional;
 import com.kesa.R;
 import com.kesa.util.ResultHandler;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -35,18 +32,16 @@ public class UserManagerFirebaseImpl extends UserManager {
 
     private final Firebase firebase;
     private final Resources resources;
-    private Map<String, User> members;
 
     @Inject
     public UserManagerFirebaseImpl(Firebase firebase, Resources resources) {
         this.firebase = firebase.child(FIREBASE_USER);
         this.resources = resources;
-        this.members = Collections.synchronizedMap(new HashMap<String, User>());
         initializeMembers();
     }
 
     @Override
-    public void saveOrUpdate(final User user, final ResultHandler onCompleteListener) {
+    public void saveOrUpdate(final User user, final ResultHandler resultHandler) {
         checkNotNull(user);
         checkState(activity != null, "Activity must be registered.");
 
@@ -62,19 +57,33 @@ public class UserManagerFirebaseImpl extends UserManager {
         this.firebase.child(user.getUid()).setValue(user, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                // TODO(hongil): Handle error cases
+                if (firebaseError == null) {
+                    // Success case.
+                    resultHandler.onComplete();
+                    user.save(); // Saving in local database.
+                } else {
+                    // Error case.
+                    resultHandler.onError(firebaseError.toException());
+                }
 
-                // Success case.
+                // Stopping the progress dialog.
                 progressDialog.dismiss();
-                onCompleteListener.onComplete();
             }
         });
     }
 
     @Override
-    public void get(final String uid, final Observer<User> userObserver) {
+    public void findWithUID(final String uid, final Observer<User> userObserver) {
         checkNotNull(userObserver);
         checkState(activity != null, "Activity must be registered.");
+
+        // Attempting to retrieve from the local database
+        List<User> users = User.find(User.class, "uid = ?", uid);
+        if (users != null && !users.isEmpty()) {
+            userObserver.onNext(users.iterator().next());
+            userObserver.onCompleted();
+            return;
+        }
 
         final ProgressDialog progressDialog =
             ProgressDialog.show(
@@ -108,16 +117,17 @@ public class UserManagerFirebaseImpl extends UserManager {
     }
 
     @Override
-    public void getMembers(final Observer<User> userObserver, final Optional<String> query) {
+    public void findWithName(final String name, final Observer<User> userObserver) {
+        checkNotNull(name);
         checkNotNull(userObserver);
         checkState(activity != null, "Activity must be registered.");
 
-        // Checking if the data has been cached.
-        if (!members.isEmpty()) {
-            for (User user : members.values()) {
-                if (!query.isPresent() || user.getName().contains(query.get())) {
-                    userObserver.onNext(user);
-                }
+        // Attempting to retrieve from the local database
+        List<User> users = User.findWithQuery(
+            User.class, "SELECT * FROM user WHERE name LIKE %?% COLLATE NOCASE", name);
+        if (users != null && !users.isEmpty()) {
+            for (User user : users) {
+                userObserver.onNext(user);
             }
 
             userObserver.onCompleted();
@@ -140,7 +150,8 @@ public class UserManagerFirebaseImpl extends UserManager {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         User user = snapshot.getValue(User.class);
-                        if (!query.isPresent() || user.getName().contains(query.get())) {
+                        // Comparing after changing to all lowercase - Case-Insensitive
+                        if (user.getName().toLowerCase().contains(name.toLowerCase())) {
                             userObserver.onNext(user);
                         }
                     }
@@ -152,21 +163,22 @@ public class UserManagerFirebaseImpl extends UserManager {
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
                     progressDialog.dismiss();
+                    userObserver.onError(firebaseError.toException());
                 }
             });
     }
 
     @Override
-    public void getExecutives(final Observer<User> userObserver) {
+    public void findWithRole(int roleId, final Observer<User> userObserver) {
         checkNotNull(userObserver);
         checkState(activity != null, "Activity must be registered.");
 
-        // Checking if the data has been cached.
-        if (!members.isEmpty()) {
-            for (User user : members.values()) {
-                if (Role.getRole(user.getRoleId()).isInGroup(Role.Group.EXECUTIVE)) {
-                    userObserver.onNext(user);
-                }
+        // Attempting to retrieve from the local database
+        List<User> users = User.findWithQuery(
+            User.class, "SELECT * FROM user WHERE roleId = " + roleId);
+        if (users != null && !users.isEmpty()) {
+            for (User user : users) {
+                userObserver.onNext(user);
             }
 
             userObserver.onCompleted();
@@ -184,14 +196,13 @@ public class UserManagerFirebaseImpl extends UserManager {
         progressDialog.show();
 
         firebase
+            .equalTo(roleId, "roleId")
             .addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         User user = snapshot.getValue(User.class);
-                        if (Role.getRole(user.getRoleId()).isInGroup(Role.Group.EXECUTIVE)) {
-                            userObserver.onNext(user);
-                        }
+                        userObserver.onNext(user);
                     }
 
                     progressDialog.dismiss();
@@ -201,6 +212,7 @@ public class UserManagerFirebaseImpl extends UserManager {
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
                     progressDialog.dismiss();
+                    userObserver.onError(firebaseError.toException());
                 }
             });
     }
@@ -211,22 +223,32 @@ public class UserManagerFirebaseImpl extends UserManager {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     User user = dataSnapshot.getValue(User.class);
-                    members.put(user.getUid(), user);
+                    List<User> users = User.find(User.class, "uid = ?", user.getUid());
+                    if (users.isEmpty()) {
+                        user.save();
+                    }
                 }
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    // TODO(hongil):
+                    User user = dataSnapshot.getValue(User.class);
+                    List<User> users = User.find(User.class, "uid = ?", user.getUid());
+                    if (users == null || users.size() != 1) {
+                        // TODO(hongil): Handle error later... & exit
+                    }
+
+                    // Updating the change
+                    long currentUserId = users.iterator().next().getId();
+                    user.setId(currentUserId);
+                    user.save();
                 }
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    // TODO(hongil):
                 }
 
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                    // TODO(hongil):
                 }
 
                 @Override

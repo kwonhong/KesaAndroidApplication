@@ -3,9 +3,10 @@ package com.kesa.profile;
 import android.app.Activity;
 import android.app.ProgressDialog;
 
-import com.google.common.base.Optional;
 import com.kesa.app.KesaApplication;
 import com.kesa.util.ResultHandler;
+
+import java.net.UnknownHostException;
 
 import rx.Observer;
 
@@ -25,27 +26,23 @@ public abstract class UserManager {
     }
 
     /**
-     * Saves the given {@code user}.
+     * Saves the given {@code user}. On network error, the method invokes
+     * {@link ResultHandler#onError(Exception)} with {@link UnknownHostException}.
      *
      * @throws IllegalStateException if {@code activity} is not registered
      */
-    public abstract void saveOrUpdate(final User user, final ResultHandler onCompleteListener);
+    public abstract void saveOrUpdate(final User user, final ResultHandler resultHandler);
 
     /**
-     * Retrieves the profile data of the given {@code uid}.
+     * Retrieves the profile data of the given {@code uid}. It blocks the UI with
+     * a {@link ProgressDialog} if the data needs to be retrieved through the network.
      *
      * @param userObserver an Observer handling the profile data
      * @throws IllegalStateException if {@code activity} is not registered
      */
-    public abstract void get(final String uid, final Observer<User> userObserver);
+    public abstract void findWithUID(final String uid, final Observer<User> userObserver);
 
-    /**
-     * Retrieves the profile data of all members satisfying the given {@code query}.
-     *
-     * @param userObserver an Observer handling the profile data
-     * @throws IllegalStateException if {@code activity} is not registered
-     */
-    public abstract void getMembers(final Observer<User> userObserver, Optional<String> query);
+    public abstract void findWithName(final String name, final Observer<User> userObserver);
 
-    public abstract void getExecutives(final Observer<User> userObserver);
+    public abstract void findWithRole(final int roleId, final Observer<User> userObserver);
 }

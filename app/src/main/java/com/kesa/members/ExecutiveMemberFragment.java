@@ -18,7 +18,6 @@ import com.kesa.profile.UserManager;
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
-import rx.Observer;
 
 /**
  * A fragment displaying the list of executive members of the {@link KesaApplication}.
@@ -68,24 +67,24 @@ public class ExecutiveMemberFragment extends Fragment {
                     return true;
                 }
             });
-        userManager.getExecutives(new Observer<User>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(User user) {
-                if (user != null) {
-                    executiveMemberExpandableListAdapter.insertItem(user);
-                }
-            }
-        });
+//        userManager.getExecutives(new Observer<User>() {
+//            @Override
+//            public void onCompleted() {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//            }
+//
+//            @Override
+//            public void onNext(User user) {
+//                if (user != null) {
+//                    executiveMemberExpandableListAdapter.insertItem(user);
+//                }
+//            }
+//        });
 
         return view;
     }

@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.firebase.client.Firebase;
 import com.kesa.modules.AppModule;
+import com.orm.SugarContext;
 
 /**
  * An application of Korean Engineering Student Association.
@@ -18,6 +19,7 @@ public class KesaApplication extends Application{
     public void onCreate() {
         super.onCreate();
         Firebase.setAndroidContext(this);
+        SugarContext.init(this);
         this.kesaComponent = DaggerKesaComponent.builder()
                 .appModule(new AppModule(this))
                 .build();

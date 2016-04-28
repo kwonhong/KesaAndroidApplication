@@ -9,23 +9,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.collect.FluentIterable;
 import com.kesa.MembersRecyclerViewAdapter;
 import com.kesa.R;
 import com.kesa.app.KesaApplication;
-import com.kesa.profile.User;
 import com.kesa.profile.UserManager;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
-import rx.Observer;
 
 /**
  * An activity that allows to search the registered members of the {@link KesaApplication}.
@@ -71,22 +63,22 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 membersRecyclerViewAdapter.clear();
-                profileManager.getMembers(new Observer<User>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(User user) {
-                        membersRecyclerViewAdapter.insertItem(user);
-                    }
-                }, Optional.of(query));
+//                profileManager.getMembers(new Observer<User>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(User user) {
+//                        membersRecyclerViewAdapter.insertItem(user);
+//                    }
+//                }, Optional.of(query));
 
                 return true;
             }
@@ -102,32 +94,32 @@ public class SearchActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.membersRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(membersRecyclerViewAdapter);
-        profileManager.getMembers(new Observer<User>() {
-            List<User> users = new ArrayList<>();
-
-            @Override
-            public void onCompleted() {
-                searchView
-                    .setSuggestions(FluentIterable
-                        .from(users)
-                        .transform(new Function<User, String>() {
-                            @Override
-                            public String apply(User input) {
-                                return input.getName();
-                            }
-                        }).toArray(String.class));
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(User user) {
-                users.add(user);
-            }
-        }, Optional.<String>absent());
+//        profileManager.getMembers(new Observer<User>() {
+//            List<User> users = new ArrayList<>();
+//
+//            @Override
+//            public void onCompleted() {
+//                searchView
+//                    .setSuggestions(FluentIterable
+//                        .from(users)
+//                        .transform(new Function<User, String>() {
+//                            @Override
+//                            public String apply(User input) {
+//                                return input.getName();
+//                            }
+//                        }).toArray(String.class));
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//            }
+//
+//            @Override
+//            public void onNext(User user) {
+//                users.add(user);
+//            }
+//        }, Optional.<String>absent());
     }
 
     @Override

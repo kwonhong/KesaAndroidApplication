@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import com.google.common.base.Optional;
 import com.kesa.R;
 import com.kesa.app.KesaApplication;
 import com.kesa.profile.ProfileActivity;
@@ -19,7 +18,6 @@ import com.kesa.profile.UserManager;
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
-import rx.Observer;
 
 /**
  * A fragment displaying the list of members of the {@link KesaApplication}.
@@ -70,24 +68,24 @@ public class NormalMemberFragment extends Fragment {
                 }
             });
 
-        userManager.getMembers(new Observer<User>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(User user) {
-                if (user != null) {
-                    normalMemberExpandableListAdapter.insertItem(user);
-                }
-            }
-        }, Optional.<String>absent());
+//        userManager.getMembers(new Observer<User>() {
+//            @Override
+//            public void onCompleted() {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//            }
+//
+//            @Override
+//            public void onNext(User user) {
+//                if (user != null) {
+//                    normalMemberExpandableListAdapter.insertItem(user);
+//                }
+//            }
+//        }, Optional.<String>absent());
 
         return view;
     }

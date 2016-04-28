@@ -38,6 +38,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Bind(R.id.nameTextView) TextView nameTextView;
     @Bind(R.id.programTextView) TextView programTextView;
     @Bind(R.id.mobileTextView) TextView mobileTextView;
+    @Bind(R.id.emailTextView) TextView emailTextView;
     @Bind(R.id.admissionYearTextView) TextView admissionYearTextView;
     @Bind(R.id.profileImageView) ImageView profileImageView;
 
@@ -111,7 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void getProfileData() {
         profileManager
             .registerActivity(this)
-            .get(userUid, new Observer<User>() {
+            .findWithUID(userUid, new Observer<User>() {
                 @Override
                 public void onCompleted() {
                     // Complete method is not necessary in this case.
@@ -129,6 +130,9 @@ public class ProfileActivity extends AppCompatActivity {
                     nameTextView.setText(user.getName());
                     programTextView.setText(user.getProgram());
                     mobileTextView.setText(user.getMobile());
+                    emailTextView.setText(user.getEmail());
+                    admissionYearTextView.setText(
+                        User.getAdmissionYearInString(user.getAdmissionYear()));
                     profileImageView.setImageBitmap(
                         imageEncoder.decodeBase64(user.getProfileImage()));
                 }
