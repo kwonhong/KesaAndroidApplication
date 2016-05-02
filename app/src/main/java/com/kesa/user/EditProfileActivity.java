@@ -1,4 +1,4 @@
-package com.kesa.profile;
+package com.kesa.user;
 
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
@@ -26,7 +27,7 @@ import android.widget.ImageView;
 import com.kesa.R;
 import com.kesa.account.AccountManager;
 import com.kesa.app.KesaApplication;
-import com.kesa.util.ImageEncoder;
+import com.kesa.util.ImageManager;
 import com.kesa.util.ResultHandler;
 
 import javax.inject.Inject;
@@ -34,6 +35,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnFocusChange;
 import rx.Observer;
 
 /**
@@ -43,32 +45,31 @@ import rx.Observer;
  */
 public class EditProfileActivity extends AppCompatActivity {
 
-    /**
-     * A key to retrieve the user's name from an {@link Intent}.
-     */
-    public static final String USER_NAME = "UserName";
+    /** A key to retrieve the user's first name from an {@link Intent}. */
+    public static final String USER_FIRST_NAME = "UserFirstName";
 
-    /**
-     * A key to retrieve the user's email from an {@link Intent}.
-     */
+    /** A key to retrieve the user's last name from an {@link Intent}. */
+    public static final String USER_LAST_NAME = "UserLastName";
+
+    /** A key to retrieve the user's email from an {@link Intent}. */
     public static final String USER_EMAIL = "UserEmail";
 
-    /**
-     * Used to inform that the activity has been started from picture selection.
-     */
+    /** Used to inform that the activity has been started from picture selection. */
     private static final int PICTURE_SELECTION_REQUEST_CODE = 1000;
 
     @Inject UserManager userManager;
     @Inject AccountManager accountManager;
-    @Inject ImageEncoder imageEncoder;
+    @Inject ImageManager imageManager;
     @Bind(R.id.profileImageView) ImageView profileImageView;
-    @Bind(R.id.nameEditText) EditText nameEditText;
+    @Bind(R.id.firstNameEditText) EditText firstNameEditText;
+    @Bind(R.id.lastNameEditText) EditText lastNameEditText;
     @Bind(R.id.programEditText) EditText programEditText;
     @Bind(R.id.mobileEditText) EditText mobileEditText;
     @Bind(R.id.emailEditText) EditText emailEditText;
     @Bind(R.id.admissionYearEditText) EditText admissionYearEditText;
     @Bind(R.id.changePictureBtn) Button changePictureButton;
     @Bind(R.id.publicizeSwitch) SwitchCompat publicizeSwitch;
+    @Bind(R.id.appBarLayout) AppBarLayout appBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +83,30 @@ public class EditProfileActivity extends AppCompatActivity {
 
         // Intent contains userName extra data iff the activity has been started from
         // SignUpActivity.
-        String userName = getIntent().getStringExtra(USER_NAME);
+        String firstName = getIntent().getStringExtra(USER_FIRST_NAME);
+        String lastName = getIntent().getStringExtra(USER_LAST_NAME);
         String userEmail = getIntent().getStringExtra(USER_EMAIL);
-        if (userName != null && userEmail != null) {
-            nameEditText.setText(userName);
+        if (firstName != null && userEmail != null && lastName != null) {
+            firstNameEditText.setText(firstName);
+            lastNameEditText.setText(lastName);
             emailEditText.setText(userEmail);
             return;
         }
 
         // Otherwise, retrieve the profile information of the current user.
         retrieveProfile();
+    }
+
+    @OnFocusChange({
+        R.id.firstNameEditText,
+        R.id.lastNameEditText,
+        R.id.programEditText,
+        R.id.mobileEditText,
+        R.id.admissionYearEditText,
+        R.id.emailEditText})
+    public void updateCollapsingToolbarLayout(View v, boolean hasFocus) {
+        // Collapsing the toolbar layout whenever user inputs something.
+        appBarLayout.setExpanded(false);
     }
 
     @OnClick(R.id.changePictureBtn)
@@ -108,6 +123,7 @@ public class EditProfileActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == PICTURE_SELECTION_REQUEST_CODE) {
+            // Processing/Saving the selected image.
             profileImageView.setImageBitmap(getSelectedBitmap(data));
         }
     }
@@ -152,8 +168,10 @@ public class EditProfileActivity extends AppCompatActivity {
                     // Redirecting to ProfileActivity on complete.
                     Intent profileIntent =
                         new Intent(getApplicationContext(), ProfileActivity.class);
+                    profileIntent.setFlags(
+                        Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    profileIntent.putExtra(ProfileActivity.FROM_EDIT_PROFILE, true);
                     startActivity(profileIntent);
-                    finish();
                 }
 
                 @Override
@@ -198,21 +216,29 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void fillProfileData(User user) {
-        nameEditText.setText(user.getName());
+        firstNameEditText.setText(user.getFirstName());
+        lastNameEditText.setText(user.getLastName());
         programEditText.setText(user.getProgram());
         mobileEditText.setText(user.getMobile());
         admissionYearEditText.setText(Integer.toString(user.getAdmissionYear()));
         emailEditText.setText(user.getEmail());
-        profileImageView.setImageBitmap(
-            imageEncoder.decodeBase64(user.getProfileImage()));
         publicizeSwitch.setChecked(user.isContactPublic());
+        imageManager.loadImage(
+            getApplicationContext(), user.getProfileImage(), profileImageView);
     }
 
     private boolean validate(User currentUser) {
+        // TODO(hongil): More input validations.
         // Checking the format of the name
-        String name = currentUser.getName();
-        if (name.isEmpty()) {
-            nameEditText.setError("Enter a valid name.");
+        String firstName = currentUser.getFirstName();
+        if (firstName.isEmpty()) {
+            firstNameEditText.setError("Enter a valid first name.");
+            return false;
+        }
+
+        String lastName = currentUser.getLastName();
+        if (lastName.isEmpty()) {
+            lastNameEditText.setError("Enter a valid last name");
             return false;
         }
 
@@ -247,9 +273,7 @@ public class EditProfileActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * Retrieves selected profile {@link Bitmap} from the given {@code data}.
-     */
+    /** Retrieves selected profile {@link Bitmap} from the given {@code data}. */
     private Bitmap getSelectedBitmap(Intent data) {
         Uri selectedImageUri = data.getData();
         String[] projection = {MediaStore.MediaColumns.DATA};
@@ -265,11 +289,12 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private User getCurrentUserData() {
-        String name = nameEditText.getText().toString();
+        String firstName = firstNameEditText.getText().toString();
+        String lastName = lastNameEditText.getText().toString();
         String program = programEditText.getText().toString();
         String mobile = mobileEditText.getText().toString();
         String email = emailEditText.getText().toString();
-        String profileImage = imageEncoder.encodeToBase64(
+        String profileImage = imageManager.encodeToBase64(
             ((BitmapDrawable) profileImageView.getDrawable()).getBitmap());
         boolean isContactPublic = publicizeSwitch.isChecked();
 
@@ -279,13 +304,14 @@ public class EditProfileActivity extends AppCompatActivity {
 
         return new User(
             accountManager.getCurrentUserUid(),
-            name,
+            firstName,
+            lastName,
             program,
             mobile,
             profileImage,
             email,
             admissionYear,
-            Role.MEMBER.getRoleId(),
+            false,
             isContactPublic);
     }
 

@@ -6,25 +6,27 @@ import android.content.res.Resources;
 import com.firebase.client.Firebase;
 import com.kesa.account.AccountManager;
 import com.kesa.account.AccountManagerFireBaseImpl;
-import com.kesa.profile.UserManager;
-import com.kesa.profile.UserManagerFirebaseImpl;
-import com.kesa.util.ImageEncoder;
+import com.kesa.user.UserManager;
+import com.kesa.user.UserManagerFirebaseImpl;
+import com.kesa.util.ImageManager;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 
 /**
- * A module containing the provide methods for dependency graph.
+ * A module containing the non-application provider methods.
  *
  * @author hongil@
  */
 @Module
 public class NetModule {
+
     @Provides
     @Singleton
-    UserManager provideProfileManager(Firebase firebase, Resources resources) {
+    UserManager provideUserManager(@Named("users") Firebase firebase, Resources resources) {
         return new UserManagerFirebaseImpl(firebase, resources);
     }
 
@@ -32,14 +34,14 @@ public class NetModule {
     @Singleton
     AccountManager provideAccountManager(
         Resources resources,
-        Firebase firebase,
+        @Named("base") Firebase firebase,
         SharedPreferences sharedPreferences) {
         return new AccountManagerFireBaseImpl(resources, firebase, sharedPreferences);
     }
 
     @Provides
     @Singleton
-    ImageEncoder provideImageEncoder() {
-        return new ImageEncoder();
+    ImageManager provideImageManager() {
+        return new ImageManager();
     }
 }

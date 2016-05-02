@@ -13,12 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kesa.account.AccountManager;
+import com.kesa.account.LoginActivity;
 import com.kesa.app.KesaApplication;
-import com.kesa.members.MembersFragment;
-import com.kesa.profile.ProfileActivity;
-import com.kesa.profile.UserManager;
-import com.kesa.profile.User;
-import com.kesa.util.ImageEncoder;
+import com.kesa.user.ProfileActivity;
+import com.kesa.user.User;
+import com.kesa.user.UserManager;
+import com.kesa.util.ImageManager;
 
 import javax.inject.Inject;
 
@@ -28,10 +28,9 @@ import rx.Observer;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Inject UserManager profileManager;
+    @Inject UserManager userManager;
     @Inject AccountManager accountManager;
-    @Inject ImageEncoder imageEncoder;
-
+    @Inject ImageManager imageManager;
     @Bind(R.id.drawer) DrawerLayout drawerLayout;
     @Bind(R.id.navigation_view) NavigationView navigationView;
 
@@ -94,8 +93,16 @@ public class MainActivity extends AppCompatActivity {
                         // Insert the fragment by replacing any existing fragment
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.frame, new MembersFragment())
+                                .replace(R.id.frame, new MemberFragment())
                                 .commit();
+                        return true;
+
+                    case R.id.logout:
+                        accountManager.clearPreviousAuthentication();
+                        Intent loginIntent =
+                            new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(loginIntent);
+                        finish();
                         return true;
 
                     default:
@@ -111,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
 
         // Retrieving the profile information of the user.
-        profileManager
+        userManager
                 .registerActivity(this)
                 .findWithUID(accountManager.getCurrentUserUid(), new Observer<User>() {
                     @Override
@@ -128,16 +135,18 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onNext(User user) {
                         // Updating the profile information after receiving the profile information.
-                        profileImageView.setImageBitmap(
-                            imageEncoder.decodeBase64(user.getProfileImage()));
-                        nameTextView.setText(user.getName());
-                        programTextView.setText(user.getProgram());
+                        if (user != null) {
+                            nameTextView.setText(User.getFullName(user));
+                            programTextView.setText(user.getProgram());
+                            imageManager.loadImage(
+                                getApplicationContext(), user.getProfileImage(), profileImageView);
+                        }
                     }
                 });
 
         getSupportFragmentManager()
             .beginTransaction()
-            .replace(R.id.frame, new MembersFragment())
+            .replace(R.id.frame, new MemberFragment())
             .commit();
     }
 }

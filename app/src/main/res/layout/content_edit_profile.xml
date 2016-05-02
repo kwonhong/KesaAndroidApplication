@@ -14,11 +14,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorBackgroundNull"
+        android:focusableInTouchMode="true"
         android:orientation="vertical"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".profile.EditProfileActivity"
+        tools:context=".user.EditProfileActivity"
         tools:showIn="@layout/activity_edit_profile">
 
         <android.support.v7.widget.CardView
@@ -26,28 +27,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:paddingLeft="@dimen/activity_vertical_margin"
                 android:paddingRight="@dimen/activity_vertical_margin">
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/nameLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp">
 
                     <android.support.design.widget.TextInputEditText
-                        android:id="@+id/nameEditText"
+                        android:id="@+id/firstNameEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@null"
                         android:drawablePadding="10dp"
                         android:drawableStart="@drawable/ic_profile"
                         android:fontFamily="sans-serif"
-                        android:hint="@string/name_edit_text_view_hint"
-                        android:inputType="textPersonName"
+                        android:hint="@string/first_name_hint"
+                        android:inputType="textCapSentences"
                         android:maxLines="1"
                         android:paddingBottom="20dp"
                         android:paddingTop="10dp"
@@ -56,17 +57,40 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <View
-                    android:id="@+id/divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_below="@+id/nameLayout"
                     android:background="@color/colorBackgroundNull"/>
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/programLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/divider"
+                    android:layout_marginTop="4dp">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/lastNameEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:drawablePadding="10dp"
+                        android:drawableStart="@drawable/ic_profile"
+                        android:fontFamily="sans-serif"
+                        android:hint="@string/last_name_hint"
+                        android:inputType="textCapSentences"
+                        android:maxLines="1"
+                        android:paddingBottom="20dp"
+                        android:paddingTop="10dp"
+                        android:singleLine="true"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorBackgroundNull"/>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="4dp">
 
                     <android.support.design.widget.TextInputEditText
@@ -78,7 +102,7 @@
                         android:drawableStart="@drawable/ic_program"
                         android:fontFamily="sans-serif"
                         android:hint="@string/program_edit_text_view_hint"
-                        android:inputType="text"
+                        android:inputType="textCapSentences"
                         android:maxLines="1"
                         android:paddingBottom="20dp"
                         android:paddingTop="10dp"
@@ -87,16 +111,13 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <View
-                    android:id="@+id/secondDivider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_below="@+id/programLayout"
                     android:background="@color/colorBackgroundNull"/>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/secondDivider"
                     android:layout_marginTop="4dp">
 
                     <android.support.design.widget.TextInputEditText
@@ -108,14 +129,14 @@
                         android:drawableStart="@drawable/ic_date_black"
                         android:fontFamily="sans-serif"
                         android:hint="@string/admission_year_edit_text_hint"
-                        android:inputType="text"
+                        android:inputType="number"
                         android:maxLines="1"
                         android:paddingBottom="20dp"
                         android:paddingTop="10dp"
                         android:singleLine="true"/>
 
                 </android.support.design.widget.TextInputLayout>
-            </RelativeLayout>
+            </LinearLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -123,14 +144,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:paddingLeft="@dimen/activity_vertical_margin"
                 android:paddingRight="@dimen/activity_vertical_margin">
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/mobileLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp">
@@ -153,16 +174,13 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <View
-                    android:id="@+id/thirdDivider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_below="@+id/mobileLayout"
                     android:background="@color/colorBackgroundNull"/>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/thirdDivider"
                     android:layout_marginTop="4dp">
 
                     <android.support.design.widget.TextInputEditText
@@ -181,7 +199,7 @@
                         android:singleLine="true"/>
 
                 </android.support.design.widget.TextInputLayout>
-            </RelativeLayout>
+            </LinearLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView

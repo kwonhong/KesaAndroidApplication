@@ -1,4 +1,4 @@
-package com.kesa.profile;
+package com.kesa.user;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -34,15 +34,34 @@ public abstract class UserManager {
     public abstract void saveOrUpdate(final User user, final ResultHandler resultHandler);
 
     /**
-     * Retrieves the profile data of the given {@code uid}. It blocks the UI with
-     * a {@link ProgressDialog} if the data needs to be retrieved through the network.
+     * Retrieves the profile data of the given {@code uid}.
      *
      * @param userObserver an Observer handling the profile data
      * @throws IllegalStateException if {@code activity} is not registered
      */
     public abstract void findWithUID(final String uid, final Observer<User> userObserver);
 
+    /**
+     * Retrieves the list of {@link User} that contains the following {@code name}
+     * in its name field.
+     *
+     * @param userObserver an Observer handling the retrieved data
+     * @throws IllegalStateException if {@code activity} is not registered
+     */
     public abstract void findWithName(final String name, final Observer<User> userObserver);
 
-    public abstract void findWithRole(final int roleId, final Observer<User> userObserver);
+
+    /**
+     * Retrieves the users of {@link KesaApplication}.
+     *
+     * @param userObserver an Observer handling the retrieved data
+     * @throws IllegalStateException if {@code activity} is not registered
+     */
+    public abstract void findAll(final Observer<User> userObserver);
+
+    /**
+     * Returns {@code true} if the user with given {@code uid} is an executive member of
+     * {@link KesaApplication}.
+     */
+    public abstract boolean isExecutiveMember(final String uid);
 }

@@ -6,15 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".profile.EditProfileActivity">
+    tools:context=".user.EditProfileActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
@@ -51,7 +53,7 @@
                         android:drawablePadding="4dp"
                         android:drawableStart="@drawable/ic_edit_white"
                         android:fontFamily="sans-serif"
-                        android:text="Change Picture"
+                        android:text="@string/change_picture_text"
                         android:textColor="@color/md_white_1000"
                         android:textStyle="bold"/>
 

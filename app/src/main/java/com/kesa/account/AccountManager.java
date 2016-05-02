@@ -36,7 +36,7 @@ public abstract class AccountManager {
         final ResultHandler resultHandler);
 
     /**
-     * Synchronously creates a new account with given {@code email} and {@code password} by
+     * Synchronously creates a new account with the given {@code email} & {@code password} by
      * displaying a {@link ProgressDialog}. On error, the method invokes
      * {@link ResultHandler#onError(Exception)} method.
      *
@@ -50,6 +50,9 @@ public abstract class AccountManager {
 
     /** Returns the unique identifier of the authenticated user. */
     public abstract String getCurrentUserUid();
+
+    /** Clears the authentication data of the previous user. */
+    public abstract void clearPreviousAuthentication();
 
     // TODO(hongil): Add javadoc
     public abstract void changePassword(

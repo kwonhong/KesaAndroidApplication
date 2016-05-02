@@ -9,14 +9,14 @@
 
         <item
             android:id="@+id/members"
-            android:checked="false"
+            android:checked="true"
             android:icon="@drawable/ic_members"
             android:title="@string/ic_members"/>
 
         <item
-            android:id="@+id/settings"
-            android:checked="false"
-            android:icon="@drawable/ic_settings"
-            android:title="@string/ic_settings"/>
+            android:id="@+id/logout"
+            android:checked="true"
+            android:icon="@drawable/ic_logout_black"
+            android:title="@string/ic_logout_black"/>
     </group>
 </menu>

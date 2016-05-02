@@ -1,5 +1,7 @@
-package com.kesa.profile;
+package com.kesa.user;
 
+
+import android.graphics.Bitmap;
 
 import com.orm.SugarRecord;
 import com.orm.dsl.Column;
@@ -18,8 +20,13 @@ public class User extends SugarRecord{
 
     @Getter
     @Setter
-    @Column(name = "name", notNull = true, unique = false)
-    private String name;
+    @Column(name = "firstName", notNull = true, unique = false)
+    private String firstName;
+
+    @Getter
+    @Setter
+    @Column(name = "lastName", notNull = true, unique = false)
+    private String lastName;
 
     @Getter
     @Setter
@@ -31,6 +38,11 @@ public class User extends SugarRecord{
     @Column(name = "mobile", notNull = true, unique = false)
     private String mobile;
 
+    /**
+     * Contains two different values depending on the circumstances.
+     * 1. Base64 String encoded {@link Bitmap} for external storage.
+     * 2. Absolute path for internal storage.
+     */
     @Getter
     @Setter
     @Column(name = "profileImage", notNull = true, unique = false)
@@ -48,12 +60,12 @@ public class User extends SugarRecord{
 
     @Getter
     @Setter
-    @Column(name = "roleId", unique = false)
-    private int roleId;
+    @Column(name = "isExecutive", unique = false)
+    private boolean isExecutive;
 
     @Getter
     @Setter
-    @Column(name = "contactPublic", unique = false)
+    @Column(name = "isContactPublic", unique = false)
     private boolean isContactPublic;
 
     public User() {
@@ -61,9 +73,14 @@ public class User extends SugarRecord{
     }
 
     public static String getAdmissionYearInString(int admissionYear) {
-        int lastDigit = admissionYear % 10;
-        int secondLastDigit = (admissionYear/10) % 10;
+        int graduationYear = admissionYear + 4;
+        int lastDigit = graduationYear % 10;
+        int secondLastDigit = (graduationYear/10) % 10;
         return secondLastDigit + "T" + lastDigit;
+    }
+
+    public static String getFullName(User user) {
+        return user.firstName + " " + user.lastName;
     }
 
 }

@@ -1,16 +1,15 @@
 package com.kesa.app;
 
-import com.kesa.members.ExecutiveMemberFragment;
-import com.kesa.members.NormalMemberFragment;
-import com.kesa.members.SearchActivity;
-import com.kesa.account.LoginActivity;
 import com.kesa.MainActivity;
-import com.kesa.members.MembersFragment;
+import com.kesa.MemberFragment;
+import com.kesa.SearchActivity;
+import com.kesa.account.LoginActivity;
 import com.kesa.account.SignUpActivity;
 import com.kesa.modules.AppModule;
 import com.kesa.modules.NetModule;
-import com.kesa.profile.EditProfileActivity;
-import com.kesa.profile.ProfileActivity;
+import com.kesa.user.EditProfileActivity;
+import com.kesa.user.ProfileActivity;
+import com.kesa.user.UserService;
 
 import javax.inject.Singleton;
 
@@ -31,8 +30,6 @@ public interface KesaComponent {
     void inject(LoginActivity loginActivity);
     void inject(SearchActivity searchActivity);
     void inject(SignUpActivity signUpActivity);
-
-    void inject(MembersFragment membersFragment);
-    void inject(NormalMemberFragment normalMemberFragment);
-    void inject(ExecutiveMemberFragment executiveMemberFragment);
+    void inject(MemberFragment memberFragment);
+    void inject(UserService userService);
 }

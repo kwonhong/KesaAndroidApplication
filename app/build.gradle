@@ -54,4 +54,7 @@ dependencies {
 
     // Sugar ORM - Internal Database dependency
     compile 'com.github.satyan:sugar:1.4'
+
+    // Image loading & caching dependency injection
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

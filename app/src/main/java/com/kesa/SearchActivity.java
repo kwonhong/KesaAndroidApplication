@@ -1,4 +1,4 @@
-package com.kesa.members;
+package com.kesa;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,15 +9,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.kesa.MembersRecyclerViewAdapter;
-import com.kesa.R;
 import com.kesa.app.KesaApplication;
-import com.kesa.profile.UserManager;
+import com.kesa.user.User;
+import com.kesa.user.UserManager;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
+import rx.Observer;
 
 /**
  * An activity that allows to search the registered members of the {@link KesaApplication}.
@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 public class SearchActivity extends AppCompatActivity {
 
     @Inject MembersRecyclerViewAdapter membersRecyclerViewAdapter;
-    @Inject UserManager profileManager;
+    @Inject UserManager userManager;
 
     private RecyclerView recyclerView;
     private MaterialSearchView searchView;
@@ -59,33 +59,39 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setVoiceSearch(true);
         searchView.setCursorDrawable(R.drawable.color_cursor_white);
         searchView.showSearch();
+        searchView.setSuggestions(new String[0]);
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                membersRecyclerViewAdapter.clear();
-//                profileManager.getMembers(new Observer<User>() {
-//                    @Override
-//                    public void onCompleted() {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onNext(User user) {
-//                        membersRecyclerViewAdapter.insertItem(user);
-//                    }
-//                }, Optional.of(query));
-
+                searchView.closeSearch();
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                if (!newText.isEmpty()) {
+                    membersRecyclerViewAdapter.clear();
+                    userManager
+                        .registerActivity(SearchActivity.this)
+                        .findWithName(newText, new Observer<User>() {
+                            @Override
+                            public void onCompleted() {
+                                membersRecyclerViewAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onNext(User user) {
+                                membersRecyclerViewAdapter.insertItem(user);
+                            }
+                        });
+                }
+
+                return true;
             }
         });
     }
@@ -94,32 +100,6 @@ public class SearchActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.membersRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(membersRecyclerViewAdapter);
-//        profileManager.getMembers(new Observer<User>() {
-//            List<User> users = new ArrayList<>();
-//
-//            @Override
-//            public void onCompleted() {
-//                searchView
-//                    .setSuggestions(FluentIterable
-//                        .from(users)
-//                        .transform(new Function<User, String>() {
-//                            @Override
-//                            public String apply(User input) {
-//                                return input.getName();
-//                            }
-//                        }).toArray(String.class));
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//
-//            }
-//
-//            @Override
-//            public void onNext(User user) {
-//                users.add(user);
-//            }
-//        }, Optional.<String>absent());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.kesa.profile;
+package com.kesa.user;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,20 +7,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kesa.MainActivity;
 import com.kesa.R;
 import com.kesa.account.AccountManager;
 import com.kesa.app.KesaApplication;
-import com.kesa.util.ImageEncoder;
+import com.kesa.util.ImageManager;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Observer;
+
+import static com.kesa.user.User.getFullName;
 
 /**
  * An activity displaying the profile information of the user.
@@ -32,15 +36,21 @@ public class ProfileActivity extends AppCompatActivity {
     /** A key to retrieve the user's uid from an {@link Intent}. */
     public static final String USER_UID ="UserUID";
 
-    @Inject UserManager profileManager;
+    /** A key to retrieve whether the activity has been started from {@link EditProfileActivity}. */
+    public static final String FROM_EDIT_PROFILE = "FromEditProfile";
+
+    @Inject UserManager userManager;
     @Inject AccountManager accountManager;
-    @Inject ImageEncoder imageEncoder;
+    @Inject ImageManager imageManager;
     @Bind(R.id.nameTextView) TextView nameTextView;
     @Bind(R.id.programTextView) TextView programTextView;
     @Bind(R.id.mobileTextView) TextView mobileTextView;
     @Bind(R.id.emailTextView) TextView emailTextView;
     @Bind(R.id.admissionYearTextView) TextView admissionYearTextView;
+    @Bind(R.id.contactNotAvailableTextView) TextView contactNotAvailableTextView;
     @Bind(R.id.profileImageView) ImageView profileImageView;
+    @Bind(R.id.emailLayout) RelativeLayout emailRelativeLayout;
+    @Bind(R.id.mobileLayout) RelativeLayout mobileRelativeLayout;
 
     private boolean isDisplayingCurrentUserProfile; // Default to false
     private String userUid;
@@ -57,7 +67,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Getting the uid of the displaying profile
         this.userUid = getIntent().getStringExtra(USER_UID);
-        if (this.userUid == null) {
+        if (this.userUid == null || this.userUid.equals(accountManager.getCurrentUserUid())) {
             isDisplayingCurrentUserProfile = true;
             this.userUid = accountManager.getCurrentUserUid();
         }
@@ -73,6 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Displaying the editButton when displaying the profile of the current user.
         if (isDisplayingCurrentUserProfile) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.menu_profile, menu);
@@ -82,12 +93,15 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        redirectToMainActivity();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(mainIntent);
-                finish();
+                redirectToMainActivity();
                 return true;
 
             case R.id.action_edit:
@@ -101,6 +115,16 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    private void redirectToMainActivity() {
+        boolean isFirstTimeProfile = getIntent().getBooleanExtra(FROM_EDIT_PROFILE, false);
+        if (isFirstTimeProfile) {
+            Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(mainIntent);
+        }
+
+        finish();
+    }
+
     private void setUpToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -110,7 +134,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     /** Updating the profile after retrieving the profile information of the user. */
     private void getProfileData() {
-        profileManager
+        userManager
             .registerActivity(this)
             .findWithUID(userUid, new Observer<User>() {
                 @Override
@@ -127,14 +151,27 @@ public class ProfileActivity extends AppCompatActivity {
                 @Override
                 public void onNext(User user) {
                     // Updating the profile information after receiving the profile information.
-                    nameTextView.setText(user.getName());
+                    nameTextView.setText(getFullName(user));
                     programTextView.setText(user.getProgram());
-                    mobileTextView.setText(user.getMobile());
-                    emailTextView.setText(user.getEmail());
                     admissionYearTextView.setText(
                         User.getAdmissionYearInString(user.getAdmissionYear()));
-                    profileImageView.setImageBitmap(
-                        imageEncoder.decodeBase64(user.getProfileImage()));
+                    imageManager.loadImage(
+                        getApplicationContext(), user.getProfileImage(), profileImageView);
+
+                    // Displays the contact information for the following cases
+                    // 1. Current user is an executive member.
+                    // 2. User publicized the contact information.
+                    // 3. Displaying the profile page of the current user.
+                    // TODO(hongil): Check if the currentUser is executive
+                    if (user.isContactPublic() || isDisplayingCurrentUserProfile ||
+                        userManager.isExecutiveMember(accountManager.getCurrentUserUid())) {
+                        mobileTextView.setText(user.getMobile());
+                        emailTextView.setText(user.getEmail());
+                    } else {
+                        emailRelativeLayout.setVisibility(View.INVISIBLE);
+                        mobileRelativeLayout.setVisibility(View.INVISIBLE);
+                        contactNotAvailableTextView.setVisibility(View.VISIBLE);
+                    }
                 }
             });
     }

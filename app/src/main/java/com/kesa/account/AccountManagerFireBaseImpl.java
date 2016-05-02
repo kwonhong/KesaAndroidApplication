@@ -13,12 +13,13 @@ import com.kesa.util.ResultHandler;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * An implementation of {@link AccountManager} with Firebase Authentication API.
+ * An implementation of the {@link AccountManager} with the Firebase Authentication API.
  *
  * @author hongil
  */
@@ -37,7 +38,7 @@ public class AccountManagerFireBaseImpl extends AccountManager {
     @Inject
     public AccountManagerFireBaseImpl(
         Resources resources,
-        Firebase firebase,
+        @Named("base") Firebase firebase,
         SharedPreferences sharedPreferences) {
 
         this.sharedPreferences = sharedPreferences;
@@ -67,6 +68,7 @@ public class AccountManagerFireBaseImpl extends AccountManager {
         firebase.authWithPassword(email, password, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
+                // Saving the UID of the authenticated user to prevent redundant authentication.
                 sharedPreferences
                     .edit()
                     .putString(AUTHENTICATED_UID, authData.getUid())
@@ -77,6 +79,7 @@ public class AccountManagerFireBaseImpl extends AccountManager {
 
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {
+                // TODO(hongil): More error handling.
                 progressDialog.dismiss();
                 resultHandler.onError(firebaseError.toException());
             }
@@ -108,6 +111,7 @@ public class AccountManagerFireBaseImpl extends AccountManager {
             new Firebase.ValueResultHandler<Map<String, Object>>() {
                 @Override
                 public void onSuccess(Map<String, Object> stringObjectMap) {
+                    // Saving the UID of the authenticated user to prevent redundant authentication.
                     sharedPreferences
                         .edit()
                         .putString(AUTHENTICATED_UID, (String) stringObjectMap.get("uid"))
@@ -118,6 +122,7 @@ public class AccountManagerFireBaseImpl extends AccountManager {
 
                 @Override
                 public void onError(FirebaseError firebaseError) {
+                    // TODO(hongil): More error handling.
                     progressDialog.dismiss();
                     resultHandler.onError(firebaseError.toException());
                 }
@@ -127,6 +132,15 @@ public class AccountManagerFireBaseImpl extends AccountManager {
     @Override
     public String getCurrentUserUid() {
         return sharedPreferences.getString(AUTHENTICATED_UID, null);
+    }
+
+    @Override
+    public void clearPreviousAuthentication() {
+        // Clearing the UID of the authenticated user.
+        sharedPreferences
+            .edit()
+            .remove(AUTHENTICATED_UID)
+            .apply();
     }
 
     @Override

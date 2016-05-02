@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.kesa.R;
 import com.kesa.app.KesaApplication;
-import com.kesa.profile.EditProfileActivity;
+import com.kesa.user.EditProfileActivity;
 import com.kesa.util.ResultHandler;
 
 import javax.inject.Inject;
@@ -27,7 +27,8 @@ import butterknife.OnClick;
 public class SignUpActivity extends AppCompatActivity {
 
     @Inject AccountManager accountManager;
-    @Bind(R.id.nameEditText) EditText nameEditText;
+    @Bind(R.id.firstNameEditText) EditText firstNameEditText;
+    @Bind(R.id.lastNameEditText) EditText lastNameEditText;
     @Bind(R.id.emailEditText) EditText emailEditText;
     @Bind(R.id.passwordEditText) EditText passwordEditText;
     @Bind(R.id.signInTextView) TextView signInTextView;
@@ -51,10 +52,11 @@ public class SignUpActivity extends AppCompatActivity {
 
     @OnClick(R.id.createAccountButton)
     void onCreateAccountClickEvent() {
-        final String name = nameEditText.getText().toString();
+        final String firstName = firstNameEditText.getText().toString();
+        final String lastName = lastNameEditText.getText().toString();
         final String email = emailEditText.getText().toString();
         final String password = passwordEditText.getText().toString();
-        if (!validate(name, email, password)) {
+        if (!validate(firstName, lastName, email, password)) {
             return;
         }
 
@@ -68,11 +70,13 @@ public class SignUpActivity extends AppCompatActivity {
 
                     // Removing the activity stacked on top (Removing LoginActivity from the stack).
                     editProfileIntent.setFlags(
-                        Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    editProfileIntent.putExtra(EditProfileActivity.USER_NAME, name);
+                        Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                    // Passing profile information through an Intent object.
+                    editProfileIntent.putExtra(EditProfileActivity.USER_FIRST_NAME, firstName);
+                    editProfileIntent.putExtra(EditProfileActivity.USER_LAST_NAME, lastName);
                     editProfileIntent.putExtra(EditProfileActivity.USER_EMAIL, email);
                     startActivity(editProfileIntent);
-                    finish();
                 }
 
                 @Override
@@ -87,10 +91,16 @@ public class SignUpActivity extends AppCompatActivity {
             });
     }
 
-    private boolean validate(String name, String email, String password) {
+    private boolean validate(String firstName, String lastName, String email, String password) {
+        // TODO(hongil): More input validation.
         // Checking the format of the name
-        if (name.isEmpty()) {
-            nameEditText.setError("Enter a valid name");
+        if (firstName.isEmpty()) {
+            firstNameEditText.setError("Enter a valid first name");
+            return false;
+        }
+
+        if (lastName.isEmpty()) {
+            lastNameEditText.setError("Enter a valid last name");
             return false;
         }
 

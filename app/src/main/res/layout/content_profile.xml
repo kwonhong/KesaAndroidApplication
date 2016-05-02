@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-                                            xmlns:app="http://schemas.android.com/apk/res-auto"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                                            android:layout_marginStart="@dimen/activity_horizontal_margin"
-                                            android:layout_marginTop="-20dp"
-                                            android:background="#ffffff"
-                                            android:padding="@dimen/activity_horizontal_margin"
-                                            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="-20dp"
+    android:background="#ffffff"
+    android:padding="@dimen/activity_horizontal_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <!-- Contact Information Title -->
         <RelativeLayout
+            android:id="@+id/contactLabelLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp">
@@ -31,18 +33,29 @@
                 android:textStyle="bold"/>
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/contactNotAvailableTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/contact_not_available_message"
+            android:visibility="invisible"/>
+
         <!-- Mobile Contact Information-->
         <RelativeLayout
+            android:id="@+id/mobileLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/contactLabelLayout">
 
             <ImageView
                 android:id="@+id/mobileIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_mobile_black"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"/>
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:src="@drawable/ic_mobile_black"/>
 
             <TextView
                 android:id="@+id/mobileTextView"
@@ -50,8 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/mobileIcon"
                 android:layout_toRightOf="@id/mobileIcon"
-                android:fontFamily="sans-serif-medium"
-                android:text="(123) 456-7890"/>
+                android:fontFamily="sans-serif-medium"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -59,15 +71,19 @@
                 android:layout_below="@id/mobileTextView"
                 android:layout_toEndOf="@id/mobileIcon"
                 android:layout_toRightOf="@id/mobileIcon"
-                android:text="Mobile"
                 android:fontFamily="sans-serif-thin"
+                android:text="Mobile"
                 android:textColor="#727272"/>
+
+
         </RelativeLayout>
 
-        <!-- Mobile Contact Information-->
+        <!-- Email Contact Information-->
         <RelativeLayout
+            android:id="@+id/emailLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/mobileLayout"
             android:paddingTop="@dimen/activity_vertical_margin">
 
             <ImageView
@@ -75,8 +91,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_email_black"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"/>
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:src="@drawable/ic_email_black"/>
 
             <TextView
                 android:id="@+id/emailTextView"
@@ -84,8 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/emailIcon"
                 android:layout_toRightOf="@id/emailIcon"
-                android:fontFamily="sans-serif-medium"
-                android:text="hello@gmail.com"/>
+                android:fontFamily="sans-serif-medium"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -93,10 +108,10 @@
                 android:layout_below="@id/emailTextView"
                 android:layout_toEndOf="@id/emailIcon"
                 android:layout_toRightOf="@id/emailIcon"
-                android:text="Email"
                 android:fontFamily="sans-serif-thin"
+                android:text="Email"
                 android:textColor="#727272"/>
         </RelativeLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>
