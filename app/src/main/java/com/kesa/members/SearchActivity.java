@@ -1,4 +1,4 @@
-package com.kesa;
+package com.kesa.members;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.kesa.R;
 import com.kesa.app.KesaApplication;
 import com.kesa.user.User;
 import com.kesa.user.UserManager;

@@ -1,8 +1,8 @@
 package com.kesa.app;
 
 import com.kesa.MainActivity;
-import com.kesa.MemberFragment;
-import com.kesa.SearchActivity;
+import com.kesa.members.MemberFragment;
+import com.kesa.members.SearchActivity;
 import com.kesa.account.LoginActivity;
 import com.kesa.account.SignUpActivity;
 import com.kesa.modules.AppModule;

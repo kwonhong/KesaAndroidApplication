@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.kesa.account.AccountManager;
 import com.kesa.account.LoginActivity;
 import com.kesa.app.KesaApplication;
+import com.kesa.members.MemberFragment;
 import com.kesa.user.ProfileActivity;
 import com.kesa.user.User;
 import com.kesa.user.UserManager;

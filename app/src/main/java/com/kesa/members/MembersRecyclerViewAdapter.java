@@ -1,4 +1,4 @@
-package com.kesa;
+package com.kesa.members;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kesa.R;
 import com.kesa.user.ProfileActivity;
 import com.kesa.user.User;
 import com.kesa.util.ImageManager;

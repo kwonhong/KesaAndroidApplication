@@ -32,6 +32,7 @@
                 android:layout_height="150dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
+                android:src="@drawable/profile"
                 app:civ_border_color="#EEEEEE"/>
 
             <TextView
@@ -42,6 +43,7 @@
                 android:layout_marginEnd="-20dp"
                 android:layout_toStartOf="@id/profileImageView"
                 android:fontFamily="sans-serif"
+                android:text="1T5"
                 android:textSize="30sp"
                 android:textStyle="bold"/>
 
@@ -52,6 +54,7 @@
                 android:layout_below="@+id/profileImageView"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="sans-serif"
+                android:text="James Kwon"
                 android:maxLines="1"
                 android:textColor="@color/md_white_1000"
                 android:textStyle="bold"/>
@@ -60,6 +63,7 @@
                 android:id="@+id/programTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Software Engineering"
                 android:layout_below="@+id/nameTextView"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="sans-serif"

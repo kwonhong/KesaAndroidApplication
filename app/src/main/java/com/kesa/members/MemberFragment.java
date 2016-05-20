@@ -1,4 +1,4 @@
-package com.kesa;
+package com.kesa.members;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.kesa.R;
 import com.kesa.app.KesaApplication;
 import com.kesa.user.User;
 import com.kesa.user.UserManager;
