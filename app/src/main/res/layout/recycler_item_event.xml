@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorBackgroundNull"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:padding="6dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="128dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/event"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/dayTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="13"
+                    android:textColor="@color/md_black_1000"
+                    android:textSize="36sp"/>
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/monthTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/dayTextView"
+                    android:layout_alignRight="@+id/dayTextView"
+                    android:layout_below="@+id/dayTextView"
+                    android:layout_marginTop="-4dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:text="JAN"
+                    android:textColor="@color/md_red_400"
+                    android:textSize="12sp"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="4dp"
+                    android:layout_toRightOf="@+id/dayTextView"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/titleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="Last Minute Launch Party"
+                        android:textColor="@color/md_black_1000"
+                        android:textStyle="bold"/>
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/timeTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="10:30 PM - 12:00 PM"
+                        android:textColor="@color/md_black_1000"
+                        android:textSize="12sp"/>
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/locationTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="8339 Kennedy Roady Markham, ON"
+                        android:textColor="@color/md_black_1000"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="end">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:elevation="12dp"
+                    android:fontFamily="sans-serif"
+                    android:minHeight="18dp"
+                    android:minWidth="64dp"
+                    android:text="Detail"
+                    android:textColor="@color/md_black_1000"
+                    android:textSize="12sp"
+                    android:textStyle="bold"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:elevation="12dp"
+                    android:fontFamily="sans-serif"
+                    android:minHeight="18dp"
+                    android:minWidth="64dp"
+                    android:text="Going"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

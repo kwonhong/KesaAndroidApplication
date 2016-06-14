@@ -9,7 +9,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images.Media;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -44,7 +43,6 @@ import rx.Observer;
  * @author hongil
  */
 public class EditProfileActivity extends AppCompatActivity {
-
     /** A key to retrieve the user's first name from an {@link Intent}. */
     public static final String USER_FIRST_NAME = "UserFirstName";
 
@@ -53,9 +51,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
     /** A key to retrieve the user's email from an {@link Intent}. */
     public static final String USER_EMAIL = "UserEmail";
-
-    /** Used to inform that the activity has been started from picture selection. */
-    private static final int PICTURE_SELECTION_REQUEST_CODE = 1000;
 
     @Inject UserManager userManager;
     @Inject AccountManager accountManager;
@@ -112,17 +107,13 @@ public class EditProfileActivity extends AppCompatActivity {
     @OnClick(R.id.changePictureBtn)
     void onChangePictureButtonClickEvent() {
         // Prompting to select a profile image from the gallery
-        Intent intent = new Intent(Intent.ACTION_PICK, Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        startActivityForResult(
-            Intent.createChooser(intent, null),
-            PICTURE_SELECTION_REQUEST_CODE);
+        imageManager.selectImageFromGallery(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == PICTURE_SELECTION_REQUEST_CODE) {
+        if (resultCode == RESULT_OK && requestCode == ImageManager.PICTURE_SELECTION_REQUEST_CODE) {
             // Processing/Saving the selected image.
             profileImageView.setImageBitmap(getSelectedBitmap(data));
         }

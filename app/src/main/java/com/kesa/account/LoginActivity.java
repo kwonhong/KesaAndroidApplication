@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check if the user has been already authenticated
         if (accountManager.getCurrentUserUid() != null) {
+            accountManager.reauthenticate();
             startMainActivity();
         }
     }

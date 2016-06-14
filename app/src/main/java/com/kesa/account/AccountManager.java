@@ -35,6 +35,9 @@ public abstract class AccountManager {
         final String password,
         final ResultHandler resultHandler);
 
+    // TODO(hongil): Add javadoc
+    public abstract void reauthenticate();
+
     /**
      * Synchronously creates a new account with the given {@code email} & {@code password} by
      * displaying a {@link ProgressDialog}. On error, the method invokes

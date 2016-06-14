@@ -3,8 +3,9 @@ package com.kesa.user;
 import android.app.ProgressDialog;
 import android.content.res.Resources;
 
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.kesa.R;
 import com.kesa.util.ResultHandler;
 
@@ -19,18 +20,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * A {@link UserManager} implementation with {@link Firebase} API.
+ * A {@link UserManager} implementation with {@link FirebaseApp} API.
  *
  * @author hongil@
  */
 public class UserManagerFirebaseImpl extends UserManager {
 
-    private final Firebase firebase;
+    private final DatabaseReference databaseReference;
     private final Resources resources;
 
     @Inject
-    public UserManagerFirebaseImpl(@Named("users") Firebase firebase, Resources resources) {
-        this.firebase = firebase;
+    public UserManagerFirebaseImpl(@Named("users") DatabaseReference databaseReference,
+                                   Resources resources) {
+        this.databaseReference = databaseReference;
         this.resources = resources;
     }
 
@@ -48,21 +50,23 @@ public class UserManagerFirebaseImpl extends UserManager {
                 false);
         progressDialog.show();
 
-        this.firebase.child(user.getUid()).setValue(user, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError == null) {
-                    // Success case.
-                    resultHandler.onComplete();
-                } else {
-                    // Error case.
-                    resultHandler.onError(firebaseError.toException());
-                }
+        this.databaseReference
+            .child(user.getUid())
+            .setValue(user, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    if (databaseError == null) {
+                        // Success case.
+                        resultHandler.onComplete();
+                    } else {
+                        // Error case.
+                        resultHandler.onError(databaseError.toException());
+                    }
 
-                // Stopping the progress dialog.
-                progressDialog.dismiss();
-            }
-        });
+                    // Stopping the progress dialog.
+                    progressDialog.dismiss();
+                }
+            });
     }
 
     @Override

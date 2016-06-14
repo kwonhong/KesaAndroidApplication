@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.kesa.account.AccountManager;
 import com.kesa.account.LoginActivity;
 import com.kesa.app.KesaApplication;
+import com.kesa.event.EventFragment;
 import com.kesa.members.MemberFragment;
 import com.kesa.user.ProfileActivity;
 import com.kesa.user.User;
@@ -79,38 +80,45 @@ public class MainActivity extends AppCompatActivity {
         };
 
         //Initializing NavigationView
-        navigationView.setNavigationItemSelectedListener(new NavigationView
-                .OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                drawerLayout.closeDrawers();
-                switch (item.getItemId()) {
-                    case R.id.profile:
-                        Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
-                        startActivity(profileIntent);
-                        return true;
+        navigationView.setNavigationItemSelectedListener(
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem item) {
+                    drawerLayout.closeDrawers();
+                    switch (item.getItemId()) {
+                        case R.id.profile:
+                            Intent profileIntent =
+                                new Intent(MainActivity.this, ProfileActivity.class);
+                            startActivity(profileIntent);
+                            return true;
 
-                    case R.id.members:
-                        // Insert the fragment by replacing any existing fragment
-                        getSupportFragmentManager()
+                        case R.id.members:
+                            getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.frame, new MemberFragment())
                                 .commit();
-                        return true;
+                            return true;
 
-                    case R.id.logout:
-                        accountManager.clearPreviousAuthentication();
-                        Intent loginIntent =
-                            new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(loginIntent);
-                        finish();
-                        return true;
+                        case R.id.events:
+                            getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frame, new EventFragment())
+                                .commit();
+                            return true;
 
-                    default:
-                        return false;
+                        case R.id.logout:
+                            accountManager.clearPreviousAuthentication();
+                            Intent loginIntent =
+                                new Intent(getApplicationContext(), LoginActivity.class);
+                            startActivity(loginIntent);
+                            finish();
+                            return true;
+
+                        default:
+                            return false;
+                    }
                 }
-            }
-        });
+            });
 
         //Setting the actionbarToggle to drawer layout
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
@@ -120,30 +128,30 @@ public class MainActivity extends AppCompatActivity {
 
         // Retrieving the profile information of the user.
         userManager
-                .registerActivity(this)
-                .findWithUID(accountManager.getCurrentUserUid(), new Observer<User>() {
-                    @Override
-                    public void onCompleted() {
-                        // Complete method is not necessary in this case.
-                    }
+            .registerActivity(this)
+            .findWithUID(accountManager.getCurrentUserUid(), new Observer<User>() {
+                @Override
+                public void onCompleted() {
+                    // Complete method is not necessary in this case.
+                }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        // TODO(hongil): Handle error cases.
-                        // ex) Network Error, Failing to receive information from Firebase API error
-                    }
+                @Override
+                public void onError(Throwable e) {
+                    // TODO(hongil): Handle error cases.
+                    // ex) Network Error, Failing to receive information from Firebase API error
+                }
 
-                    @Override
-                    public void onNext(User user) {
-                        // Updating the profile information after receiving the profile information.
-                        if (user != null) {
-                            nameTextView.setText(User.getFullName(user));
-                            programTextView.setText(user.getProgram());
-                            imageManager.loadImage(
-                                getApplicationContext(), user.getProfileImage(), profileImageView);
-                        }
+                @Override
+                public void onNext(User user) {
+                    // Updating the profile information after receiving the profile information.
+                    if (user != null) {
+                        nameTextView.setText(User.getFullName(user));
+                        programTextView.setText(user.getProgram());
+                        imageManager.loadImage(
+                            getApplicationContext(), user.getProfileImage(), profileImageView);
                     }
-                });
+                }
+            });
 
         getSupportFragmentManager()
             .beginTransaction()
