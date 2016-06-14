@@ -14,6 +14,13 @@
             android:title="@string/ic_members"/>
 
         <item
+            android:id="@+id/events"
+            android:checked="true"
+            android:icon="@drawable/ic_members"
+            android:title="events
+            "/>
+
+        <item
             android:id="@+id/logout"
             android:checked="true"
             android:icon="@drawable/ic_logout_black"

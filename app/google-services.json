@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "508403491411",
+    "firebase_url": "https://torrid-inferno-4735.firebaseio.com",
+    "project_id": "torrid-inferno-4735",
+    "storage_bucket": "torrid-inferno-4735.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:508403491411:android:c917b52695e78b59",
+        "android_client_info": {
+          "package_name": "com.kesa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "508403491411-2o8arrq5es0pokad5jbhedhl8i2j3vgr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcE5nS9Qyg8bEn_QA5NmpECE6ijWFo0TM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

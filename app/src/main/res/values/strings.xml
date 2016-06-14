@@ -53,5 +53,9 @@
     <string name="contact_not_available_message">The following contact information is not public. In case of emergency, please contact one of the executive members for further assistance.</string>
     <string name="last_name_hint">Last name</string>
     <string name="change_picture_text">Change Picture</string>
+    <string name="saving_or_updating_event_dialog_message">Saving/Updating event.</string>
+    <string name="saving_event_dialog_message">Creating event…</string>
+    <string name="title_activity_event_create">EventCreateActivity</string>
+    <string name="retrieving_event_dialog_message">Retrieving events…</string>
 
 </resources>

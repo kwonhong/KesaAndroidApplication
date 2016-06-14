@@ -3,17 +3,17 @@ package com.kesa.account;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.support.annotation.NonNull;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.kesa.R;
 import com.kesa.util.ResultHandler;
 
-import java.util.Map;
-
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -31,18 +31,22 @@ public class AccountManagerFireBaseImpl extends AccountManager {
      */
     private static final String AUTHENTICATED_UID = "AuthenticatedUid";
 
+    // TODO(hongilk): Changes to OAuth later
+    private static final String AUTHENTICATED_EMAIL = "AuthenticatedEmail";
+    private static final String AUTHENTICATED_PASSWORD = "AuthenticatedPassword";
+
     private final SharedPreferences sharedPreferences;
-    private final Firebase firebase;
+    private final FirebaseAuth firebaseAuth;
     private final Resources resources;
 
     @Inject
     public AccountManagerFireBaseImpl(
         Resources resources,
-        @Named("base") Firebase firebase,
+        FirebaseAuth firebaseAuth,
         SharedPreferences sharedPreferences) {
 
         this.sharedPreferences = sharedPreferences;
-        this.firebase = firebase;
+        this.firebaseAuth = firebaseAuth;
         this.resources = resources;
     }
 
@@ -65,23 +69,51 @@ public class AccountManagerFireBaseImpl extends AccountManager {
                 false,
                 false);
         progressDialog.show();
-        firebase.authWithPassword(email, password, new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                // Saving the UID of the authenticated user to prevent redundant authentication.
-                sharedPreferences
-                    .edit()
-                    .putString(AUTHENTICATED_UID, authData.getUid())
-                    .apply();
-                progressDialog.dismiss();
-                resultHandler.onComplete();
-            }
 
+        firebaseAuth
+            .signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        // Saving the UID of the authenticated user to prevent redundant authentication.
+                        sharedPreferences
+                            .edit()
+                            .putString(AUTHENTICATED_UID, task.getResult().getUser().getUid())
+                            .putString(AUTHENTICATED_EMAIL, email)
+                            .putString(AUTHENTICATED_PASSWORD, password)
+                            .apply();
+                        progressDialog.dismiss();
+                        resultHandler.onComplete();
+                        keepUserSignedIn(email, password);
+                    } else {
+                        // TODO(hongil): More error handling.
+                        progressDialog.dismiss();
+                        resultHandler.onError(task.getException());
+                    }
+                }
+            });
+    }
+
+    @Override
+    public void reauthenticate() {
+        final String email = sharedPreferences.getString(AUTHENTICATED_EMAIL, null);
+        final String password = sharedPreferences.getString(AUTHENTICATED_EMAIL, null);
+        checkNotNull(email);
+        checkNotNull(password);
+
+        firebaseAuth.signInWithEmailAndPassword(email, password);
+        keepUserSignedIn(email, password);
+    }
+
+    private void keepUserSignedIn(final String email, final String password) {
+        firebaseAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                // TODO(hongil): More error handling.
-                progressDialog.dismiss();
-                resultHandler.onError(firebaseError.toException());
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user == null) {
+                    firebaseAuth.signInWithEmailAndPassword(email, password);
+                }
             }
         });
     }
@@ -105,26 +137,28 @@ public class AccountManagerFireBaseImpl extends AccountManager {
                 false,
                 false);
         progressDialog.show();
-        firebase.createUser(
-            email,
-            password,
-            new Firebase.ValueResultHandler<Map<String, Object>>() {
-                @Override
-                public void onSuccess(Map<String, Object> stringObjectMap) {
-                    // Saving the UID of the authenticated user to prevent redundant authentication.
-                    sharedPreferences
-                        .edit()
-                        .putString(AUTHENTICATED_UID, (String) stringObjectMap.get("uid"))
-                        .apply();
-                    progressDialog.dismiss();
-                    resultHandler.onComplete();
-                }
 
+        firebaseAuth
+            .createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
-                public void onError(FirebaseError firebaseError) {
-                    // TODO(hongil): More error handling.
-                    progressDialog.dismiss();
-                    resultHandler.onError(firebaseError.toException());
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    // If the new account was created, the user is also signed in
+                    if (task.isSuccessful()) {
+                        // Saving the UID of the authenticated user to prevent
+                        // redundant authentication.
+                        sharedPreferences
+                            .edit()
+                            .putString(AUTHENTICATED_UID, task.getResult().getUser().getUid())
+                            .apply();
+                        progressDialog.dismiss();
+                        resultHandler.onComplete();
+                        keepUserSignedIn(email, password);
+                    } else {
+                        // TODO(hongil): More error handling.
+                        progressDialog.dismiss();
+                        resultHandler.onError(task.getException());
+                    }
                 }
             });
     }
@@ -162,17 +196,8 @@ public class AccountManagerFireBaseImpl extends AccountManager {
                 false,
                 false);
         progressDialog.show();
-        firebase.changePassword(email, oldPassword, newPassword, new Firebase.ResultHandler() {
-            @Override
-            public void onSuccess() {
-                progressDialog.dismiss();
-            }
 
-            @Override
-            public void onError(FirebaseError firebaseError) {
-                progressDialog.dismiss();
-            }
-        });
+        // TODO(hongil): Implement the functionality later
     }
 
     @Override
@@ -194,16 +219,7 @@ public class AccountManagerFireBaseImpl extends AccountManager {
                 false,
                 false);
         progressDialog.show();
-        firebase.changeEmail(oldEmail, password, newEmail, new Firebase.ResultHandler() {
-            @Override
-            public void onSuccess() {
-                progressDialog.dismiss();
-            }
 
-            @Override
-            public void onError(FirebaseError firebaseError) {
-                progressDialog.dismiss();
-            }
-        });
+        // TODO(hongil): Implement the functionality later
     }
 }

@@ -78,7 +78,7 @@ public class MembersRecyclerViewAdapter
         // create a new view
         this.context = parent.getContext();
         View view = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.recycler_item_members, parent, false);
+            .inflate(R.layout.recycler_item_member, parent, false);
 
         TextView nameTextView = (TextView) view.findViewById(R.id.nameTextView);
         TextView programTextView = (TextView) view.findViewById(R.id.programTextView);

@@ -1,6 +1,8 @@
 package com.kesa.app;
 
 import com.kesa.MainActivity;
+import com.kesa.event.EventCreateActivity;
+import com.kesa.event.EventFragment;
 import com.kesa.members.MemberFragment;
 import com.kesa.members.SearchActivity;
 import com.kesa.account.LoginActivity;
@@ -32,4 +34,7 @@ public interface KesaComponent {
     void inject(SignUpActivity signUpActivity);
     void inject(MemberFragment memberFragment);
     void inject(UserService userService);
+    void inject(EventFragment eventFragment);
+
+    void inject(EventCreateActivity eventCreateActivity);
 }
